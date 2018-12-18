@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using WiMD.Authentication;
 
@@ -18,17 +19,17 @@ namespace WiMD.Server.Controllers
         }
 
         [HttpPost]
-        public ActionResult<string> Post([FromBody]User model)
+        public ActionResult<User> Post([FromBody]User model)
         {
             try
             {
-                var token = _authenticationService.Authenticate(model);
-
-                return token;
+                var user = _authenticationService.Authenticate(model);
+                return user;
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                model.Token = ex.Message;
+                return model;
             }
         }
     }

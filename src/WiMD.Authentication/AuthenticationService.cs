@@ -12,7 +12,7 @@ namespace WiMD.Authentication
     {
         ISecretKeyProvider _secretKeyProvider;
 
-        private const string _userName = "krzys";
+        private const string _email = "krzys@email.com";
         private const string _password = "haslo";
 
         public AuthenticationService(ISecretKeyProvider secretKeyProvider)
@@ -20,24 +20,27 @@ namespace WiMD.Authentication
             _secretKeyProvider = secretKeyProvider; 
         }
 
-        public string Authenticate(User user)
+        public User Authenticate(User user)
         {
-            if (!ValidatePassword(user.Name, user.Password))
+            if (!ValidatePassword(user))
             {
                 throw new ArgumentException("Wrong password");
             }
 
-            return CreateJwtToken();
+            user.Token = CreateJwtToken(user);
+            user.Password = null;
+
+            return user;
         }
 
-        private string CreateJwtToken()
+        private string CreateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, _userName)
+                    new Claim(ClaimTypes.Name, user.Email)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secretKeyProvider.GetSecretKey()), SecurityAlgorithms.HmacSha256Signature)
@@ -47,9 +50,9 @@ namespace WiMD.Authentication
             return tokenHandler.WriteToken(token);
         }
 
-        private bool ValidatePassword(string userName, string password)
+        private bool ValidatePassword(User user)
         {
-            return _userName == userName && _password == password;
+            return _email == user.Email && _password == user.Password;
         }
     }
 }

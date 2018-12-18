@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiMD.Client", "WiMD.Client\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{B693B484-A910-4E57-B9D1-616161A437F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMD.Authentication", "WiMD.Authentication\WiMD.Authentication.csproj", "{10EAC9D7-67F4-418B-8146-AAF704A1A5BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiMD.Authentication", "WiMD.Authentication\WiMD.Authentication.csproj", "{10EAC9D7-67F4-418B-8146-AAF704A1A5BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

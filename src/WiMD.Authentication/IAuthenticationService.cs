@@ -6,6 +6,6 @@ namespace WiMD.Authentication
 {
     public interface IAuthenticationService
     {
-        string Authenticate(User user);
+        User Authenticate(User user);
     }
 }
