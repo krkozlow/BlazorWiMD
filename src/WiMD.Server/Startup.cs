@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using WiMD.Authentication;
 
 namespace WiMD.Server
 {
@@ -18,13 +22,18 @@ namespace WiMD.Server
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SecretKeyProvider = new SecretKeyProvider(configuration);
         }
 
         public IConfiguration Configuration { get; }
+        public ISecretKeyProvider SecretKeyProvider { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ISecretKeyProvider, SecretKeyProvider>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddWiMDAuthentication(SecretKeyProvider);
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -49,6 +58,7 @@ namespace WiMD.Server
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
