@@ -9,6 +9,7 @@ namespace WiMD.Authentication
     {
         IConfiguration Configuration { get; set; }
         static string _secretKey;
+
         static SecretKeyProvider()
         {
             _secretKey = Guid.NewGuid().ToString();
@@ -21,8 +22,6 @@ namespace WiMD.Authentication
 
         public byte[] GetSecretKey()
         {
-            string secretKeyName = "secretKey";
-
             return Encoding.ASCII.GetBytes(_secretKey);
         }
     }
