@@ -39,6 +39,7 @@ namespace WiMD.Server
 
             services.AddWiMDAuthentication(SecretKeyProvider);
             services.AddCors();
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -63,6 +64,7 @@ namespace WiMD.Server
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseSignalR(routes => routes.MapHub<>)
             app.UseMvc();
         }
     }
