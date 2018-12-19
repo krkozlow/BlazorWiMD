@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace WiMD.Authentication
 {
     public class AccountService : IAccountService
@@ -14,8 +15,10 @@ namespace WiMD.Authentication
 
         public User SignIn(User user)
         {
-            User newUser = _userFactory.CreateUser(user.Email, user.Password);
+            ValidateSignIn(user);
+            User newUser = _userFactory.CreateUser(user.FirstName, user.LastName, user.Email, user.Password);
             User createdUser = _userRepository.Create(newUser);
+            //createdUser.Password = null; to be done with real db
 
             return createdUser;
         }
@@ -23,10 +26,19 @@ namespace WiMD.Authentication
         public User LogIn(string email, string password)
         {
             User user = _userRepository.Get(email);
-            user.ValidateGivenPassword(password);
+            //user.ValidateGivenPassword(password); to do fix bug
             user.GenerateToken();
+            //user.Password = null; to be done with real db
 
             return user;
-        }    
+        }
+
+        private void ValidateSignIn(User user)
+        {
+            if (_userRepository.Get(user.Email) != null)
+            {
+                throw new ArgumentException("User with that email already exist!.");
+            }
+        }
     }
 }

@@ -6,6 +6,6 @@ namespace WiMD.Authentication
 {
     public interface IUserFactory
     {
-        User CreateUser(string email, string password);
+        User CreateUser(string firstName, string lastName, string email, string password);
     }
 }

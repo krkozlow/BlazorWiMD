@@ -21,9 +21,9 @@ namespace WiMD.Authentication
 
         static IList<User> users = new List<User>
         {
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("andrew@email.com", "somePass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("mike@email.com", "noPass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("lenox@email.com", "pass")
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("andrzej", "golota", "andrew@email.com", "somePass"),
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("mike", "tyson", "mike@email.com", "noPass"),
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("lenox", "lewis", "lenox@email.com", "pass")
         };
     }
 }

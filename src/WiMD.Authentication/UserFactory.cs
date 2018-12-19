@@ -14,7 +14,7 @@ namespace WiMD.Authentication
             _tokenProvider = tokenProvider;
         }
 
-        public User CreateUser(string email, string password)
+        public User CreateUser(string firstName, string lastName, string email, string password)
         {
             User user = new User(_tokenProvider);
             ValidateEmail(email);
@@ -25,6 +25,8 @@ namespace WiMD.Authentication
 
             user.Email = email;
             user.Password = hashPassword;
+            user.FirstName = firstName;
+            user.LastName = lastName;
 
             return user;
         }

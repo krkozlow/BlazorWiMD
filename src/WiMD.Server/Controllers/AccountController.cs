@@ -28,18 +28,18 @@ namespace WiMD.Server.Controllers
             }
             catch (Exception ex)
             {
-                model.Token = ex.Message;
-                return model;
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost("[Action]")]
-        public IActionResult SignIn([FromBody]User model)
+        public ActionResult<User> SignIn([FromBody]User model)
         {
             try
             {
                 var user = _accountService.SignIn(model);
-                return RedirectToAction(nameof(LogIn), user);
+
+                return _accountService.LogIn(model.Email, model.Password);
             }
             catch (Exception ex)
             {
