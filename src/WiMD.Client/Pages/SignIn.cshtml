@@ -1,0 +1,50 @@
+﻿@page "/Signin"
+@inject HttpClient Http
+
+<form>
+    <div class="form-group">
+        <label for="inputFirstName">First name</label>
+        <input type="text" class="form-control" id="inputFirstName" placeholder="First name" bind="@user.FirstName" />
+    </div>
+    <div class="form-group">
+        <label for="inputLastName">Last name</label>
+        <input type="text" class="form-control" id="inputLastName" placeholder="Last name" bind="@user.LastName" />
+    </div>
+    <div class="form-group">
+        <label for="inputEmail">Email address</label>
+        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" bind="@user.Email" />
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword">Password</label>
+        <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
+    </div>
+    <div class="form-group">
+        <label for="repearInputPassword">Repeat password</label>
+        <input type="password" class="form-control" id="repeatInputPassword" placeholder="Password" bind="@user.RepeatPassword" />
+    </div>
+    <button type="button" class="btn btn-primary" onclick="@(async () => await Submit())">Submit</button>
+</form>
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@functions {
+
+    class User
+    {
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string RepeatPassword { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public string Token { get; set; }
+    }
+
+    User user = new User();
+
+    private async Task Submit()
+    {
+        var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/SignIn", user);
+        Console.WriteLine(result);
+    }
+}

@@ -11,12 +11,10 @@ namespace WiMD.Authentication
     public class User
     {
         private readonly IJwtTokenProvider _tokenProvider;
-        private readonly IUserRepository _userRepository;
 
-        public User(IJwtTokenProvider tokenProvider, IUserRepository userRepository)
+        public User(IJwtTokenProvider tokenProvider)
         {
             _tokenProvider = tokenProvider;
-            _userRepository = userRepository;
         }
 
         public string Email { get; set; }

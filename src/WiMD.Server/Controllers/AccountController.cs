@@ -10,20 +10,35 @@ namespace WiMD.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        public AuthenticationController(IAccountService accountService)
+        public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
 
-        [HttpPost]
-        public ActionResult<User> Post([FromBody]User model)
+        [HttpPost("[Action]")]
+        public ActionResult<User> LogIn([FromBody]User model)
         {
             try
             {
                 var user = _accountService.LogIn(model.Email, model.Password);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                model.Token = ex.Message;
+                return model;
+            }
+        }
+
+        [HttpPost("[Action]")]
+        public ActionResult<User> SignIn([FromBody]User model)
+        {
+            try
+            {
+                var user = _accountService.SignIn(model);
                 return user;
             }
             catch (Exception ex)

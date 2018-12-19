@@ -12,7 +12,6 @@
         <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
     </div>
     <button type="button" class="btn btn-primary" onclick="@(async () => await Submit())">Submit</button>
-    @*<button type="button" class="btn btn-primary" onclick="@(() => onClickHandle())">Submit</button>*@
 </form>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
@@ -28,14 +27,9 @@
 
     User user = new User();
 
-    private void onClickHandle()
-    {
-        Console.WriteLine("onClick handle");
-    }
-
     private async Task Submit()
     {
-        var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Authentication", user);
+        var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
         Console.WriteLine(result);
     }
 }
