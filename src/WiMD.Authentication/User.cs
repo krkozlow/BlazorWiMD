@@ -20,6 +20,8 @@ namespace WiMD.Authentication
         public string Email { get; set; }
         public string Password { get; set; }
         public string Token { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         public void ValidateGivenPassword(string password)
         {
@@ -44,7 +46,7 @@ namespace WiMD.Authentication
 
         public void GenerateToken()
         {
-            var token = _tokenProvider.CreateJwtToken(Email);
+            Token = _tokenProvider.CreateJwtToken(Email);
         }
     }
 }

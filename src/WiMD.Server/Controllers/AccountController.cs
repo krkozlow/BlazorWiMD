@@ -34,17 +34,16 @@ namespace WiMD.Server.Controllers
         }
 
         [HttpPost("[Action]")]
-        public ActionResult<User> SignIn([FromBody]User model)
+        public IActionResult SignIn([FromBody]User model)
         {
             try
             {
                 var user = _accountService.SignIn(model);
-                return user;
+                return RedirectToAction(nameof(LogIn), user);
             }
             catch (Exception ex)
             {
-                model.Token = ex.Message;
-                return model;
+                return BadRequest(ex.Message);
             }
         }
     }

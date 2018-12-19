@@ -17,7 +17,6 @@ namespace WiMD.Authentication
             User newUser = _userFactory.CreateUser(user.Email, user.Password);
             User createdUser = _userRepository.Create(newUser);
 
-            createdUser.GenerateToken();
             return createdUser;
         }
 
