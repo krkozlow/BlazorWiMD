@@ -12,10 +12,10 @@ namespace WiMD.Server.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IAuthenticationService _authenticationService;
-        public AuthenticationController(IAuthenticationService authenticationService)
+        private readonly IAccountService _accountService;
+        public AuthenticationController(IAccountService accountService)
         {
-            _authenticationService = authenticationService;
+            _accountService = accountService;
         }
 
         [HttpPost]
@@ -23,7 +23,7 @@ namespace WiMD.Server.Controllers
         {
             try
             {
-                var user = _authenticationService.Authenticate(model);
+                var user = _accountService.LogIn(model.Email, model.Password);
                 return user;
             }
             catch (Exception ex)

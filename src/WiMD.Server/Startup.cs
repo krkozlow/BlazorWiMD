@@ -32,7 +32,11 @@ namespace WiMD.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ISecretKeyProvider, SecretKeyProvider>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
+            services.AddScoped<IUserFactory, UserFactory>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
             services.AddWiMDAuthentication(SecretKeyProvider);
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

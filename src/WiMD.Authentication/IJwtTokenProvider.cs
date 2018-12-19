@@ -4,8 +4,8 @@ using System.Text;
 
 namespace WiMD.Authentication
 {
-    public interface IAuthenticationService
+    public interface IJwtTokenProvider
     {
-        User Authenticate(User user);
+        string CreateJwtToken(string email);
     }
 }

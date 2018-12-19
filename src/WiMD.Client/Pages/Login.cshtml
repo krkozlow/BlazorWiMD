@@ -36,6 +36,6 @@
     private async Task Submit()
     {
         var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Authentication", user);
-        Console.WriteLine(result.Token);
+        Console.WriteLine(result);
     }
 }
