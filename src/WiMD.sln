@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiMD.Authentication", "WiMD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hub", "Hub", "{0D311982-F6EE-4603-B2D5-C5ABA3BC9D29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMD.Hub", "WiMD.Hub\WiMD.Hub.csproj", "{3D1DCBCC-CB4F-4EDD-BE3B-1BFE79D03CB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiMD.Hub", "WiMD.Hub\WiMD.Hub.csproj", "{3D1DCBCC-CB4F-4EDD-BE3B-1BFE79D03CB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

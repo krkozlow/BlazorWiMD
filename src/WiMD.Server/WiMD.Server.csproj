@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WiMD.Authentication\WiMD.Authentication.csproj" />
+    <ProjectReference Include="..\WiMD.Hub\WiMD.Hub.csproj" />
   </ItemGroup>
 
 </Project>

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WiMD.Authentication;
+using WiMD.Hub;
 
 namespace WiMD.Server
 {
@@ -51,6 +52,7 @@ namespace WiMD.Server
                 options.AllowAnyHeader();
                 options.AllowAnyMethod();
                 options.AllowAnyOrigin();
+                options.AllowCredentials();
             });
 
             if (env.IsDevelopment())
@@ -64,7 +66,7 @@ namespace WiMD.Server
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseSignalR(routes => routes.MapHub<>)
+            app.UseSignalR(routes => routes.MapHub<LocationHub>("/locationhub"));
             app.UseMvc();
         }
     }
