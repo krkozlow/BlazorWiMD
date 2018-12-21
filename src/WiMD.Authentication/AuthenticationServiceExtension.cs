@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WiMD.Authentication
 {
@@ -25,6 +26,22 @@ namespace WiMD.Authentication
                     IssuerSigningKey = new SymmetricSecurityKey(secretKeyProvider.GetSecretKey()),
                     ValidateIssuer = false,
                     ValidateAudience = false
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!String.IsNullOrEmpty(accessToken) && 
+                            path.StartsWithSegments("/locationhub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

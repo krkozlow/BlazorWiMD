@@ -1,5 +1,9 @@
 ﻿@page "/Login"
+
+@using Blazor.Extensions.Storage;
+
 @inject HttpClient Http
+@inject LocalStorage localStorage
 
 <form>
     <div class="form-group">
@@ -30,6 +34,6 @@
     private async Task Submit()
     {
         var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
-        Console.WriteLine(result.Token);
+        await localStorage.SetItem<string>("token", result.Token);
     }
 }
