@@ -10,17 +10,17 @@ namespace WiMD.Hub
     {
         public override Task OnConnectedAsync()
         {
-            Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, $"{Context.ConnectionId} joined the conversation");
+            //Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, "", "");
             return base.OnConnectedAsync();
         }
-        public void Send(string name, string message)
+        public void Send(string token, decimal longitute, decimal latitude)
         {
-            Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, message);
+            Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, longitute, latitude);
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, $"{Context.ConnectionId} left the conversation");
+            //Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, 0, 0);
             return base.OnDisconnectedAsync(exception);
         }
     }

@@ -24,38 +24,54 @@
 </div>
 
 @functions {
+    Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
     HubConnection connection;
     IList<string> messages = new List<string>();
     AspNetMonsters.Blazor.Geolocation.Location location;
+    string token;
 
-    protected override void OnAfterRender()
+    protected override async Task OnAfterRenderAsync()
     {
-        base.OnAfterRender();
-        JSRuntime.Current.InvokeAsync<bool>("ShowMap");
+        location = await LocationService.GetLocationAsync();
+        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        //await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
     }
 
     protected override async Task OnInitAsync()
     {
-        var token = await localStorage.GetItem<string>("token");
+        token = await localStorage.GetItem<string>("token");
         connection = new HubConnectionBuilder().WithUrl("http://localhost:64827/locationhub", options =>
         {
             options.AccessTokenProvider = () => Task.FromResult(token);
         })
         .Build();
-        connection.On<string, string>("broadcastMessage", this.OnBroadcastMessage);
+        connection.On<string, decimal, decimal>("broadcastMessage", this.OnBroadcastMessage);
         await connection.StartAsync();
     }
 
-    Task OnBroadcastMessage(string name, string message)
+    async Task OnBroadcastMessage(string token, decimal latitude, decimal longitute)
     {
-        messages.Add(name + " : " + message);
-        StateHasChanged();
-        return Task.CompletedTask;
+        if (locations.ContainsKey(token))
+        {
+            locations[token] = new AspNetMonsters.Blazor.Geolocation.Location { Latitude = latitude, Longitude = longitute };
+        }
+        else
+        {
+            locations.Add(token, new AspNetMonsters.Blazor.Geolocation.Location { Latitude = latitude, Longitude = longitute });
+        }
+
+        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        foreach (var loc in locations)
+        {
+            await JSRuntime.Current.InvokeAsync<bool>("AddLocation", loc.Value.Latitude, loc.Value.Longitude);
+        }
+
+        return;
     }
 
     async Task SendMessage()
     {
         location = await LocationService.GetLocationAsync();
-        await connection.InvokeAsync("Send", "Blazor Client", $"Latitude: {location.Latitude},Longitude: {location.Longitude},Accuracy: {location.Accuracy}");
+        await connection.InvokeAsync("Send", token, location.Latitude, location.Longitude);
     }
 }
