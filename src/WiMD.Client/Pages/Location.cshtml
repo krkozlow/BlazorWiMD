@@ -10,12 +10,12 @@
 
 <div class="container">
     <input type="button" id="sendMessage" value="Send" class="btn btn-primary" onclick="@SendMessage" />
-    <ul id="discussion">
+    @*<ul id="discussion">
         @foreach (var message in messages)
         {
             <li>@message</li>
         }
-    </ul>
+    </ul>*@
 </div>
 <div class="container">
     <div id="mapid">
@@ -24,11 +24,11 @@
 </div>
 
 @functions {
-    Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
-    HubConnection connection;
-    IList<string> messages = new List<string>();
-    AspNetMonsters.Blazor.Geolocation.Location location;
-    string token;
+        Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
+        HubConnection connection;
+        IList<string> messages = new List<string>();
+        AspNetMonsters.Blazor.Geolocation.Location location;
+        string token;
 
     protected override async Task OnAfterRenderAsync()
     {
@@ -45,33 +45,34 @@
             options.AccessTokenProvider = () => Task.FromResult(token);
         })
         .Build();
-        connection.On<string, decimal, decimal>("broadcastMessage", this.OnBroadcastMessage);
+        connection.On<string, AspNetMonsters.Blazor.Geolocation.Location>("broadcastMessage", this.OnBroadcastMessage);
         await connection.StartAsync();
     }
 
-    async Task OnBroadcastMessage(string token, decimal latitude, decimal longitute)
+    Task OnBroadcastMessage(string tok, AspNetMonsters.Blazor.Geolocation.Location loc)
     {
-        if (locations.ContainsKey(token))
+        if (locations.ContainsKey(tok))
         {
-            locations[token] = new AspNetMonsters.Blazor.Geolocation.Location { Latitude = latitude, Longitude = longitute };
+            locations[tok] = loc;
         }
         else
         {
-            locations.Add(token, new AspNetMonsters.Blazor.Geolocation.Location { Latitude = latitude, Longitude = longitute });
+            locations.Add(token, loc);
         }
 
-        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
-        foreach (var loc in locations)
+        JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        foreach (var l in locations)
         {
-            await JSRuntime.Current.InvokeAsync<bool>("AddLocation", loc.Value.Latitude, loc.Value.Longitude);
+            Console.WriteLine($"Location: {l.Value.Latitude} user: {l.Key}");
+            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Value.Latitude, l.Value.Longitude);
         }
 
-        return;
+        return Task.CompletedTask;
     }
 
     async Task SendMessage()
     {
         location = await LocationService.GetLocationAsync();
-        await connection.InvokeAsync("Send", token, location.Latitude, location.Longitude);
+        await connection.InvokeAsync("Send", token, new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude });
     }
 }
