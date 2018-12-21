@@ -1,6 +1,7 @@
 ﻿@using Blazor.Extensions;
 @using Blazor.Extensions.Storage;
-@using AspNetMonsters.Blazor.Geolocation
+@using AspNetMonsters.Blazor.Geolocation;
+@using Microsoft.JSInterop;
 
 @inject LocalStorage localStorage
 @inject LocationService LocationService
@@ -16,11 +17,22 @@
         }
     </ul>
 </div>
+<div class="container">
+    <div id="mapid">
+
+    </div>
+</div>
 
 @functions {
     HubConnection connection;
     IList<string> messages = new List<string>();
     AspNetMonsters.Blazor.Geolocation.Location location;
+
+    protected override void OnAfterRender()
+    {
+        base.OnAfterRender();
+        JSRuntime.Current.InvokeAsync<bool>("ShowMap");
+    }
 
     protected override async Task OnInitAsync()
     {
