@@ -1,9 +1,11 @@
 ﻿@page "/Login"
 
 @using Blazor.Extensions.Storage;
+@using Microsoft.AspNetCore.Blazor.Services;
 
 @inject HttpClient Http
 @inject LocalStorage localStorage
+@inject IUriHelper uriHelper
 
 <form>
     <div class="form-group">
@@ -22,18 +24,24 @@
 
 @functions {
 
-    class User
-    {
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Token { get; set; }
-    }
+class User
+{
+    public string Password { get; set; }
+    public string Email { get; set; }
+    public string Token { get; set; }
+}
 
-    static User user = new User();
+static User user = new User();
 
-    private async Task Submit()
+private async Task Submit()
+{
+    var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
+    if (result.Token != null)
     {
-        var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
-        await localStorage.SetItem<string>("token", result.Token);
+        uriHelper.NavigateTo("/location");
     }
+    Console.WriteLine(result.Token);
+
+    await localStorage.SetItem<string>("token", result.Token);
+}
 }

@@ -1,4 +1,8 @@
-﻿@page "/Signin"
+﻿@using Microsoft.AspNetCore.Blazor.Services;
+
+@page "/Signin"
+
+@inject IUriHelper uriHelper
 @inject HttpClient Http
 
 <form>
@@ -45,6 +49,10 @@
     private async Task Submit()
     {
         var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/SignIn", user);
+        if (result.Token != null)
+        {
+            uriHelper.NavigateTo("/location");
+        }
         Console.WriteLine(result.Token);
     }
 }

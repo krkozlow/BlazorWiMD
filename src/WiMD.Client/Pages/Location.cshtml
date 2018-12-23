@@ -49,15 +49,15 @@
         await connection.StartAsync();
     }
 
-    Task OnBroadcastMessage(string tok, AspNetMonsters.Blazor.Geolocation.Location loc)
+    Task OnBroadcastMessage(string sendToken, AspNetMonsters.Blazor.Geolocation.Location sendLocation)
     {
-        if (locations.ContainsKey(tok))
+        if (locations.ContainsKey(sendToken))
         {
-            locations[tok] = loc;
+            locations[sendToken] = sendLocation;
         }
         else
         {
-            locations.Add(token, loc);
+            locations.Add(token, sendLocation);
         }
 
         JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
