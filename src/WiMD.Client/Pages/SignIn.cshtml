@@ -5,7 +5,28 @@
 @inject IUriHelper uriHelper
 @inject HttpClient Http
 
-<form>
+@*<form class="form-signin">
+    <div class="form-label-group">
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputEmail"></label>
+    </div>
+
+    <div class="form-label-group">
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <label for="inputPassword"></label>
+    </div>
+
+    <div class="custom-control custom-checkbox mb-3">
+        <input type="checkbox" class="custom-control-input" id="customCheck1">
+        <label class="custom-control-label" for="customCheck1"></label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit"></button>
+    <hr class="my-4">
+    <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i></button>
+    <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i></button>
+</form>*@
+
+<form class="form-signin">
     <div class="form-group">
         <label for="inputFirstName">First name</label>
         <input type="text" class="form-control" id="inputFirstName" placeholder="First name" bind="@user.FirstName" />
@@ -23,10 +44,6 @@
         <label for="inputPassword">Password</label>
         <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
     </div>
-    <div class="form-group">
-        <label for="repearInputPassword">Repeat password</label>
-        <input type="password" class="form-control" id="repeatInputPassword" placeholder="Password" bind="@user.RepeatPassword" />
-    </div>
     <button type="button" class="btn btn-primary" onclick="@(async () => await Submit())">Submit</button>
 </form>
 
@@ -38,7 +55,6 @@
     {
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public string RepeatPassword { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }

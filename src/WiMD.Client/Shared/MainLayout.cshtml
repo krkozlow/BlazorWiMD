@@ -1,15 +1,55 @@
+@using Blazor.Extensions;
+@using Blazor.Extensions.Storage;
+@using AspNetMonsters.Blazor.Geolocation;
+@using Microsoft.JSInterop;
+@using Microsoft.AspNetCore.Blazor.Services;
+
 @inherits BlazorLayoutComponent
+
+@inject LocalStorage localStorage
+@inject LocationService LocationService
+@inject IUriHelper uriHelper
 
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+    <div class="top-row">
+        <p class="col-10 h4">Where is my dude?</p>
+
+        <button onclick="@handleLogin" class='btn btn-lg ' style='background-color:transparent;'>
+            <span class="oi oi-account-login"></span>
+        </button>
+        <button onclick="@handleLogout" class='btn btn-lg ' style='background-color:transparent;'>
+            <span class="oi oi-account-logout"></span>
+        </button>
+        <button onclick="@handlePerson" class='btn btn-lg ' style='background-color:transparent;'>
+            <span class="oi oi-person"></span>
+        </button>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@functions {
+    string token;
+
+    private void handleLogin()
+    {
+        uriHelper.NavigateTo("/login");
+    }
+
+    private async void handleLogout()
+    {
+        await localStorage.SetItem<string>("token", null);
+        uriHelper.NavigateTo("/");
+    }
+
+    private void handlePerson()
+    {
+        uriHelper.NavigateTo("/account");
+    }
+}

@@ -2,20 +2,16 @@
 @using Blazor.Extensions.Storage;
 @using AspNetMonsters.Blazor.Geolocation;
 @using Microsoft.JSInterop;
+@using Microsoft.AspNetCore.Blazor.Services;
 
 @inject LocalStorage localStorage
 @inject LocationService LocationService
+@inject IUriHelper uriHelper
 
 @page "/location"
 
 <div class="container">
     <input type="button" id="sendMessage" value="Send" class="btn btn-primary" onclick="@SendMessage" />
-    @*<ul id="discussion">
-        @foreach (var message in messages)
-        {
-            <li>@message</li>
-        }
-    </ul>*@
 </div>
 <div class="container">
     <div id="mapid">
@@ -24,11 +20,11 @@
 </div>
 
 @functions {
-        Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
-        HubConnection connection;
-        IList<string> messages = new List<string>();
-        AspNetMonsters.Blazor.Geolocation.Location location;
-        string token;
+    Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
+    HubConnection connection;
+    IList<string> messages = new List<string>();
+    AspNetMonsters.Blazor.Geolocation.Location location;
+    string token;
 
     protected override async Task OnAfterRenderAsync()
     {
@@ -40,6 +36,10 @@
     protected override async Task OnInitAsync()
     {
         token = await localStorage.GetItem<string>("token");
+        if (token == null)
+        {
+            uriHelper.NavigateTo("/login");
+        }
         connection = new HubConnectionBuilder().WithUrl("http://localhost:64827/locationhub", options =>
         {
             options.AccessTokenProvider = () => Task.FromResult(token);
