@@ -7,6 +7,19 @@ namespace WiMD.Authentication
 {
     public class UserRepository : IUserRepository
     {
+        static UserRepository()
+        {
+            users = new List<User>
+            {
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("andrzej", "golota", "krzys1@email.com", "pass"),
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("mike", "tyson", "krzys2@email.com", "pass"),
+            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("lenox", "lewis", "krzys3@email.com", "pass")
+            };
+
+            users.ElementAt(0).AddToGroup("first-group");
+            users.ElementAt(1).AddToGroup("first-group");
+        }
+
         public User Create(User user)
         {
             users.Add(user);
@@ -28,11 +41,6 @@ namespace WiMD.Authentication
             return Get(user.Email);
         }
 
-        static IList<User> users = new List<User>
-        {
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("andrzej", "golota", "andrew@email.com", "somePass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("mike", "tyson", "mike@email.com", "noPass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("lenox", "lewis", "lenox@email.com", "pass")
-        };
+        static IList<User> users;
     }
 }

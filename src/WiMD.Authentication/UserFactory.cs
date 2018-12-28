@@ -27,6 +27,7 @@ namespace WiMD.Authentication
             user.Password = hashPassword;
             user.FirstName = firstName;
             user.LastName = lastName;
+            user.Groups = new List<Group>();
 
             return user;
         }

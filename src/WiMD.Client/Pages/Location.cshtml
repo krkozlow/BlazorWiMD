@@ -20,51 +20,43 @@
 </div>
 
 @functions {
-    Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location> locations = new Dictionary<string, AspNetMonsters.Blazor.Geolocation.Location>();
     HubConnection connection;
     IList<string> messages = new List<string>();
     AspNetMonsters.Blazor.Geolocation.Location location;
-    string token;
-
-    protected override async Task OnAfterRenderAsync()
-    {
-        location = await LocationService.GetLocationAsync();
-        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
-        await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
-    }
+    IList<AspNetMonsters.Blazor.Geolocation.Location> locations = new List<AspNetMonsters.Blazor.Geolocation.Location>();
 
     protected override async Task OnInitAsync()
     {
-        token = await localStorage.GetItem<string>("token");
-        //if (token == null)
-        //{
-        //    uriHelper.NavigateTo("/login");
-        //}
+        var token = await localStorage.GetItem<string>("token");
+        Console.WriteLine($"Location {token}");
+        if (token == null)
+        {
+            uriHelper.NavigateTo("/login");
+        }
         connection = new HubConnectionBuilder().WithUrl("http://localhost:64827/locationhub", options =>
         {
             options.AccessTokenProvider = () => Task.FromResult(token);
         })
         .Build();
-        connection.On<string, AspNetMonsters.Blazor.Geolocation.Location>("broadcastMessage", this.OnBroadcastMessage);
+
+        connection.On<AspNetMonsters.Blazor.Geolocation.Location>("broadcastMessage", this.OnBroadcastMessage);
         await connection.StartAsync();
+
+        location = await LocationService.GetLocationAsync();
+        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
     }
 
-    Task OnBroadcastMessage(string sendToken, AspNetMonsters.Blazor.Geolocation.Location sendLocation)
+    Task OnBroadcastMessage(AspNetMonsters.Blazor.Geolocation.Location sendLocation)
     {
-        if (locations.ContainsKey(sendToken))
-        {
-            locations[sendToken] = sendLocation;
-        }
-        else
-        {
-            locations.Add(token, sendLocation);
-        }
+        Console.WriteLine("OnBroadcastMessage");
+        locations.Add(sendLocation);
 
-        JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        Console.WriteLine($"Amount of locations {locations.Count}");
+
         foreach (var l in locations)
         {
-            Console.WriteLine($"Location: {l.Value.Latitude} user: {l.Key}");
-            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Value.Latitude, l.Value.Longitude);
+            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Latitude, l.Longitude);
         }
 
         return Task.CompletedTask;
@@ -73,6 +65,6 @@
     async Task SendMessage()
     {
         location = await LocationService.GetLocationAsync();
-        await connection.InvokeAsync("Send", token, new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude });
+        await connection.InvokeAsync("Send", new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude });
     }
 }

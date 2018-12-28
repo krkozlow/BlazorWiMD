@@ -15,32 +15,50 @@ namespace WiMD.Hub
             _userRepository = userRepository;
         }
 
-        public override Task OnConnectedAsync()
+        public async override Task OnConnectedAsync()
         {
-            return base.OnConnectedAsync();
+            var user = _userRepository.Get(Context.User.Identity.Name);
+
+            foreach (var group in user.GetPublicGroups())
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, group);
+            }
+
+            await base.OnConnectedAsync();
         }
 
-        public void AddToGroup(string groupName)
+        public async Task AddToGroup(string groupName)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
             user.AddToGroup(groupName);
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
-        public void RemoveFromGroup(string groupName)
+        public async Task RemoveFromGroup(string groupName)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
             user.RemoveFromGroup(groupName);
+
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
         }
 
-        public async Task Send(string token, Location location)
+        public async Task Send(Location location)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
-            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", token, location);
+            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", location);
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public async override Task OnDisconnectedAsync(Exception exception)
         {
-            return base.OnDisconnectedAsync(exception);
+            var user = _userRepository.Get(Context.User.Identity.Name);
+
+            foreach (var group in user.GetPublicGroups())
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
     }
 
