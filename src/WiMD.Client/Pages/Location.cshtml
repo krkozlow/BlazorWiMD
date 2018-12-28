@@ -21,8 +21,8 @@
 
 @functions {
     HubConnection connection;
-    IList<string> messages = new List<string>();
     AspNetMonsters.Blazor.Geolocation.Location location;
+    IList<UserLocation> usersLocation = new List<UserLocation>();
     IList<AspNetMonsters.Blazor.Geolocation.Location> locations = new List<AspNetMonsters.Blazor.Geolocation.Location>();
 
     protected override async Task OnInitAsync()
@@ -39,32 +39,60 @@
         })
         .Build();
 
-        connection.On<AspNetMonsters.Blazor.Geolocation.Location>("broadcastMessage", this.OnBroadcastMessage);
+        connection.On<UserLocation>("broadcastMessage", this.OnBroadcastMessage);
         await connection.StartAsync();
 
         location = await LocationService.GetLocationAsync();
+        var userName = await localStorage.GetItem<string>("user_name");
+
         await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
-        await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
     }
 
-    Task OnBroadcastMessage(AspNetMonsters.Blazor.Geolocation.Location sendLocation)
+    Task OnBroadcastMessage(UserLocation userLocation)
     {
-        Console.WriteLine("OnBroadcastMessage");
-        locations.Add(sendLocation);
-
-        Console.WriteLine($"Amount of locations {locations.Count}");
-
-        foreach (var l in locations)
+        if (usersLocation.Any(x => x.Email == userLocation.Email))
         {
-            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Latitude, l.Longitude);
+            var locationToUpdate = usersLocation.First(x => x.Email == userLocation.Email);
+            locationToUpdate.Location = userLocation.Location;
+        }
+        else
+        {
+            usersLocation.Add(userLocation);
+        }
+
+        LogAllUsersLocation();
+
+        foreach (var l in usersLocation)
+        {
+            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Location.Latitude, l.Location.Longitude, l.Email);
         }
 
         return Task.CompletedTask;
     }
 
+    private void LogAllUsersLocation()
+    {
+        foreach (var user in usersLocation)
+        {
+            Console.WriteLine($"Email {user.Email}, Lat {user.Location.Latitude}, Long {user.Location.Longitude}");
+        }
+    }
+
     async Task SendMessage()
     {
         location = await LocationService.GetLocationAsync();
-        await connection.InvokeAsync("Send", new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude });
+        UserLocation currentUser = new UserLocation
+        {
+            Email = await localStorage.GetItem<string>("user_name"),
+            Location = new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude }
+        };
+
+        await connection.InvokeAsync("Send", currentUser);
+    }
+
+    public class UserLocation
+    {
+        public string Email { get; set; }
+        public AspNetMonsters.Blazor.Geolocation.Location Location { get; set; }
     }
 }

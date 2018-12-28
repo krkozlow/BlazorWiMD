@@ -9,6 +9,8 @@ namespace WiMD.Hub
     [Authorize]
     public class LocationHub : Microsoft.AspNetCore.SignalR.Hub
     {
+        static decimal counter = 0.005m;
+
         IUserRepository _userRepository;
         public LocationHub(IUserRepository userRepository)
         {
@@ -43,10 +45,14 @@ namespace WiMD.Hub
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
         }
 
-        public async Task Send(Location location)
+        public async Task Send(UserLocation userLocation)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
-            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", location);
+
+            //temporary in case of tests
+            MockMoving(userLocation);
+
+            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", userLocation);
         }
 
         public async override Task OnDisconnectedAsync(Exception exception)
@@ -60,6 +66,26 @@ namespace WiMD.Hub
 
             await base.OnDisconnectedAsync(exception);
         }
+
+        private static void MockMoving(UserLocation userLocation)
+        {
+            if (userLocation.Email == "krzys1@email.com")
+            {
+                userLocation.Location.Longitude += counter;
+            }
+            else if (userLocation.Email == "krzys2@email.com")
+            {
+                userLocation.Location.Latitude += counter;
+            }
+
+            counter *= 1.1m;
+        }
+    }
+
+    public class UserLocation
+    {
+        public string Email { get; set; }
+        public Location Location { get; set; }
     }
 
     public class Location

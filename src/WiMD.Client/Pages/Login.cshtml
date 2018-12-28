@@ -37,6 +37,7 @@
     {
         var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
         await localStorage.SetItem<string>("token", result.Token);
+        await localStorage.SetItem<string>("user_name", result.Email);
 
         if (result.Token != null)
         {

@@ -23,21 +23,6 @@
             integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
             crossorigin=""></script>
 
-    <!--<script>
-        function ShowMap() {
-            var mymap = L.map('mapid').setView([51.505, -0.09], 13);
-
-            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jrb3psb3ciLCJhIjoiY2pweTlsMzBiMHIyMTQ0bXY0eHk2cGpwcSJ9.US6zUD29EZMAdpClbEwMzw', {
-                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                maxZoom: 18,
-                id: 'mapbox.streets',
-                accessToken: 'your.mapbox.access.token'
-            }).addTo(mymap);
-
-            L.marker([51.5, -0.09]).addTo(mymap);
-        }
-    </script>-->
-
     <script>
         var mymap;
         function SetMap(latitude, longitute) {
@@ -50,14 +35,12 @@
                 accessToken: 'your.mapbox.access.token'
             }).addTo(mymap);
 
-            L.marker([latitude, longitute]).addTo(mymap);
-
-            console.log("Location lat " + latitude + " log " + longitute);
+            //L.marker([latitude, longitute]).addTo(mymap);
         }
 
-        function AddLocation(latitude, longitute) {
-            console.log("set my location");
-            L.marker([latitude, longitute]).addTo(mymap);
+        function AddLocation(latitude, longitute, userName) {
+            let marker = L.marker([latitude, longitute]).addTo(mymap);
+            marker.bindPopup("<b>" + userName +"</b>").openPopup();
         }
     </script>
 
