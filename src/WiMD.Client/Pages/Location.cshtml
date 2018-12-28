@@ -27,6 +27,7 @@
 
     protected override async Task OnInitAsync()
     {
+        Console.WriteLine("OnInitAsync");
         var token = await localStorage.GetItem<string>("token");
         Console.WriteLine($"Location {token}");
         if (token == null)
@@ -43,9 +44,19 @@
         await connection.StartAsync();
 
         location = await LocationService.GetLocationAsync();
-        var userName = await localStorage.GetItem<string>("user_name");
 
         await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+        await JSRuntime.Current.InvokeAsync<bool>("Interval");
+
+        await base.OnInitAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync()
+    {
+        Console.WriteLine("OnAfterRenderAsync");
+        await Task.Delay(5000);
+        await SendMessage();
+        await base.OnAfterRenderAsync();
     }
 
     Task OnBroadcastMessage(UserLocation userLocation)
@@ -88,6 +99,7 @@
         };
 
         await connection.InvokeAsync("Send", currentUser);
+        StateHasChanged();
     }
 
     public class UserLocation
