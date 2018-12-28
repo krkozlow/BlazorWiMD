@@ -2,25 +2,44 @@
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
+using WiMD.Authentication;
 
 namespace WiMD.Hub
 {
     [Authorize]
     public class LocationHub : Microsoft.AspNetCore.SignalR.Hub
     {
+        IUserRepository _userRepository;
+        public LocationHub(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
         public override Task OnConnectedAsync()
         {
-            //Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, "", "");
             return base.OnConnectedAsync();
         }
-        public void Send(string token, Location location)
+
+        public void AddToGroup(string groupName)
         {
-            Clients.All.SendAsync("broadcastMessage", token, location);
+            var user = _userRepository.Get(Context.User.Identity.Name);
+            user.AddToGroup(groupName);
+        }
+
+        public void RemoveFromGroup(string groupName)
+        {
+            var user = _userRepository.Get(Context.User.Identity.Name);
+            user.RemoveFromGroup(groupName);
+        }
+
+        public async Task Send(string token, Location location)
+        {
+            var user = _userRepository.Get(Context.User.Identity.Name);
+            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", token, location);
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            //Clients.All.SendAsync("broadcastMessage", Context.User.Identity.Name, 0, 0);
             return base.OnDisconnectedAsync(exception);
         }
     }

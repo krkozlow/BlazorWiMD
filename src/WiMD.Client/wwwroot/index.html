@@ -49,9 +49,14 @@
                 id: 'mapbox.streets',
                 accessToken: 'your.mapbox.access.token'
             }).addTo(mymap);
+
+            L.marker([latitude, longitute]).addTo(mymap);
+
+            console.log("Location lat " + latitude + " log " + longitute);
         }
 
         function AddLocation(latitude, longitute) {
+            console.log("set my location");
             L.marker([latitude, longitute]).addTo(mymap);
         }
     </script>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,6 +23,7 @@ namespace WiMD.Authentication
         public string Token { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public IList<Group> Groups { get; set; }
 
         public void ValidateGivenPassword(string password)
         {
@@ -42,6 +44,28 @@ namespace WiMD.Authentication
                     throw new ArgumentException("Given password is wrong.");
                 }
             }
+        }
+
+        public IReadOnlyList<string> GetPublicGroups()
+        {
+            return Groups.Where(x => x.IsPublic).Select(x => x.Name).ToList();
+        }
+
+        public void AddToGroup(string groupName)
+        {
+            Groups.Add(new Group { Name = groupName, IsPublic = true });
+        }
+
+        public void RemoveFromGroup(string groupName)
+        {
+            var toRemove = Groups.FirstOrDefault(x => x.Name == groupName);
+
+            if (toRemove == null)
+            {
+                throw new ArgumentException($"User does not belong to group {groupName}");
+            }
+
+            Groups.Remove(toRemove);
         }
 
         public void GenerateToken()

@@ -30,16 +30,16 @@
     {
         location = await LocationService.GetLocationAsync();
         await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
-        //await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
+        await JSRuntime.Current.InvokeAsync<bool>("AddLocation", location.Latitude, location.Longitude);
     }
 
     protected override async Task OnInitAsync()
     {
         token = await localStorage.GetItem<string>("token");
-        if (token == null)
-        {
-            uriHelper.NavigateTo("/login");
-        }
+        //if (token == null)
+        //{
+        //    uriHelper.NavigateTo("/login");
+        //}
         connection = new HubConnectionBuilder().WithUrl("http://localhost:64827/locationhub", options =>
         {
             options.AccessTokenProvider = () => Task.FromResult(token);
