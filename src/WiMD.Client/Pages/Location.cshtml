@@ -11,9 +11,6 @@
 @page "/location"
 
 <div class="container">
-    <input type="button" id="sendMessage" value="Send" class="btn btn-primary" onclick="@SendMessage" />
-</div>
-<div class="container">
     <div id="mapid">
 
     </div>
@@ -42,11 +39,9 @@
 
         connection.On<UserLocation>("broadcastMessage", this.OnBroadcastMessage);
         await connection.StartAsync();
-
         location = await LocationService.GetLocationAsync();
 
         await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
-        await JSRuntime.Current.InvokeAsync<bool>("Interval");
 
         await base.OnInitAsync();
     }
@@ -72,6 +67,8 @@
         }
 
         LogAllUsersLocation();
+
+        JSRuntime.Current.InvokeAsync<bool>("CleanMarkups");
 
         foreach (var l in usersLocation)
         {
