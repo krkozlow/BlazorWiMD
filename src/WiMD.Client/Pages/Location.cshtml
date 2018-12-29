@@ -38,6 +38,7 @@
         .Build();
 
         connection.On<UserLocation>("broadcastMessage", this.OnBroadcastMessage);
+        connection.On<string>("userLeave", this.OnUserLeave);
         await connection.StartAsync();
         location = await LocationService.GetLocationAsync();
 
@@ -78,6 +79,27 @@
         return Task.CompletedTask;
     }
 
+    Task OnUserLeave(string userName)
+    {
+        if (usersLocation.Any(x => x.Email == userName))
+        {
+            var userToRemove = usersLocation.First(x => x.Email == userName);
+            var indexToRemove = usersLocation.IndexOf(userToRemove);
+            usersLocation.RemoveAt(indexToRemove);
+        }
+
+        LogAllUsersLocation();
+
+        JSRuntime.Current.InvokeAsync<bool>("CleanMarkups");
+
+        foreach (var l in usersLocation)
+        {
+            JSRuntime.Current.InvokeAsync<bool>("AddLocation", l.Location.Latitude, l.Location.Longitude, l.Email);
+        }
+
+        return Task.CompletedTask;
+    }
+
     private void LogAllUsersLocation()
     {
         foreach (var user in usersLocation)
@@ -97,6 +119,11 @@
 
         await connection.InvokeAsync("Send", currentUser);
         StateHasChanged();
+    }
+
+    async Task DeleteUser()
+    {
+
     }
 
     public class UserLocation

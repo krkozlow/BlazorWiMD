@@ -50,7 +50,7 @@ namespace WiMD.Hub
             var user = _userRepository.Get(Context.User.Identity.Name);
 
             //temporary in case of tests
-            MockMoving(userLocation);
+            //MockMoving(userLocation);
 
             await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", userLocation);
         }
@@ -58,6 +58,8 @@ namespace WiMD.Hub
         public async override Task OnDisconnectedAsync(Exception exception)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
+
+            await Clients.Groups(user.GetPublicGroups()).SendAsync("userLeave", Context.User.Identity.Name);
 
             foreach (var group in user.GetPublicGroups())
             {
