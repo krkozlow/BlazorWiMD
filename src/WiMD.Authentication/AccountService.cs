@@ -26,7 +26,7 @@ namespace WiMD.Authentication
         public User LogIn(string email, string password)
         {
             User user = _userRepository.Get(email);
-            //user.ValidateGivenPassword(password); to do fix bug
+            user.ValidateGivenPassword(password);
             user.GenerateToken();
             //user.Password = null; to be done with real db
 

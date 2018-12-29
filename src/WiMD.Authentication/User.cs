@@ -27,22 +27,9 @@ namespace WiMD.Authentication
 
         public void ValidateGivenPassword(string password)
         {
-            var hashPassword = Convert.FromBase64String(Password);
-            int bytesOfSalt = 16;
-            byte[] salt = new byte[bytesOfSalt];
-            Array.Copy(hashPassword, 0, salt, 0, bytesOfSalt);
-
-            int iterations = 10000;
-            var pbkdfForGivenPassword = new Rfc2898DeriveBytes(password, salt, iterations);
-            int passwordLendth = 20;
-            byte[] hash = pbkdfForGivenPassword.GetBytes(passwordLendth);
-
-            for (int i = 0; i < passwordLendth; i++)
+            if (CryptographyHelper.HashPassword(password) != Password)
             {
-                if (hashPassword[i + bytesOfSalt] != hash[i])
-                {
-                    throw new ArgumentException("Given password is wrong.");
-                }
+                throw new ArgumentException("Given password is not valid.");
             }
         }
 

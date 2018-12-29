@@ -20,31 +20,13 @@ namespace WiMD.Authentication
             ValidateEmail(email);
             ValidatePassword(password);
 
-            var salt = GetSalt();
-            var hashPassword = HashPassword(password, salt);
-
             user.Email = email;
-            user.Password = hashPassword;
+            user.Password = CryptographyHelper.HashPassword(password);
             user.FirstName = firstName;
             user.LastName = lastName;
             user.Groups = new List<Group>();
 
             return user;
-        }
-
-        //https://medium.com/@mehanix/lets-talk-security-salted-password-hashing-in-c-5460be5c3aae
-        private string HashPassword(string password, byte[] salt)
-        {
-            int iterations = 1000;
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations);
-
-            byte[] hash = pbkdf2.GetBytes(20);
-            byte[] hashBytes = new byte[36];
-
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
-
-            return Convert.ToBase64String(hashBytes);
         }
 
         private byte[] GetSalt()
