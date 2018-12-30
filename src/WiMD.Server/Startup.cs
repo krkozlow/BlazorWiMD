@@ -38,6 +38,9 @@ namespace WiMD.Server
             services.AddScoped<IUserFactory, UserFactory>();
             services.AddScoped<IUserRepository, UserRepository>();
 
+            services.AddSingleton<IConnectionProvider, ConnectionProvider>();
+            services.AddSingleton<IConnectionService, ConnectionService>();
+
             services.AddWiMDAuthentication(SecretKeyProvider);
             services.AddCors();
             services.AddSignalR();

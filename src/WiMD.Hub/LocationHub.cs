@@ -12,19 +12,18 @@ namespace WiMD.Hub
         static decimal counter = 0.005m;
 
         IUserRepository _userRepository;
-        public LocationHub(IUserRepository userRepository)
+        IConnectionService _connectionService;
+
+        public LocationHub(IUserRepository userRepository, IConnectionService connectionService)
         {
             _userRepository = userRepository;
+            _connectionService = connectionService;
         }
 
         public async override Task OnConnectedAsync()
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
-
-            foreach (var group in user.GetPublicGroups())
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, group);
-            }
+            _connectionService.ConnectUser(user.Email, Context.ConnectionId);
 
             await base.OnConnectedAsync();
         }
@@ -52,19 +51,16 @@ namespace WiMD.Hub
             //temporary in case of tests
             //MockMoving(userLocation);
 
+            var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
+
+            await Clients.Users(listenUsersIds).SendAsync("broadcastMessage", userLocation);
             await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", userLocation);
         }
 
         public async override Task OnDisconnectedAsync(Exception exception)
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
-
-            await Clients.Groups(user.GetPublicGroups()).SendAsync("userLeave", Context.User.Identity.Name);
-
-            foreach (var group in user.GetPublicGroups())
-            {
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
-            }
+            _connectionService.DisconnectUser(user.Email);
 
             await base.OnDisconnectedAsync(exception);
         }
@@ -82,17 +78,5 @@ namespace WiMD.Hub
 
             counter *= 1.1m;
         }
-    }
-
-    public class UserLocation
-    {
-        public string Email { get; set; }
-        public Location Location { get; set; }
-    }
-
-    public class Location
-    {
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
     }
 }
