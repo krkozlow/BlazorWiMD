@@ -52,15 +52,16 @@ namespace WiMD.Hub
 
         public async Task Send(UserLocation userLocation)
         {
-            var user = _userRepository.Get(Context.User.Identity.Name);
+            var userName = Context.User.Identity.Name;
+            var user = _userRepository.Get(userName);
 
-            //temporary in case of tests
             MockMoving(userLocation);
 
             var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
 
             _logger.LogError($"{userLocation.Email} send lat {userLocation.Location.Latitude} long {userLocation.Location.Longitude}. Connected users {string.Join(",", listenUsersIds)}");
 
+            userLocation.Email = userName;
             await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
         }
 
@@ -82,7 +83,7 @@ namespace WiMD.Hub
             }
             else if (userLocation.Email == "krzys2@email.com")
             {
-                userLocation.Location.Latitude += 0.0005m;
+                userLocation.Location.Latitude += 0.005m;
                 //userLocation.Location.Latitude += counter;
             }
         }

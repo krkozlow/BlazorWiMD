@@ -115,7 +115,6 @@
         location = await LocationService.GetLocationAsync();
         UserLocation currentUser = new UserLocation
         {
-            Email = await sessionStorage.GetItem<string>("user_name"),
             Location = new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude }
         };
 

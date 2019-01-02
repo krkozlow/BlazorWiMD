@@ -37,7 +37,6 @@ private async Task Submit()
 {
     var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
     await sessionStorage.SetItem<string>("token", result.Token);
-    await sessionStorage.SetItem<string>("user_name", result.Email);
 
     if (result.Token != null)
     {
