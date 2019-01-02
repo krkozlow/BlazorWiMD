@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WiMD.Authentication;
 
@@ -11,19 +13,23 @@ namespace WiMD.Hub
     {
         static decimal counter = 0.005m;
 
-        IUserRepository _userRepository;
-        IConnectionService _connectionService;
+        private readonly IUserRepository _userRepository;
+        private readonly IConnectionService _connectionService;
+        private readonly ILogger<LocationHub> _logger;
 
-        public LocationHub(IUserRepository userRepository, IConnectionService connectionService)
+        public LocationHub(IUserRepository userRepository, IConnectionService connectionService, ILogger<LocationHub> logger)
         {
             _userRepository = userRepository;
             _connectionService = connectionService;
+            _logger = logger;
         }
 
         public async override Task OnConnectedAsync()
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
             _connectionService.ConnectUser(user.Email, Context.ConnectionId);
+
+            _logger.LogError($"{user.Email} connected");
 
             await base.OnConnectedAsync();
         }
@@ -49,9 +55,12 @@ namespace WiMD.Hub
             var user = _userRepository.Get(Context.User.Identity.Name);
 
             //temporary in case of tests
-            //MockMoving(userLocation);
+            MockMoving(userLocation);
 
             var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
+
+            _logger.LogError($"{userLocation.Email} send lat {userLocation.Location.Latitude} long {userLocation.Location.Longitude}. Connected users {string.Join(",", listenUsersIds)}");
+
             await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
         }
 
@@ -59,6 +68,8 @@ namespace WiMD.Hub
         {
             var user = _userRepository.Get(Context.User.Identity.Name);
             _connectionService.DisconnectUser(user.Email);
+
+            _logger.LogError($"{user.Email} disconnected");
 
             await base.OnDisconnectedAsync(exception);
         }
@@ -71,10 +82,9 @@ namespace WiMD.Hub
             }
             else if (userLocation.Email == "krzys2@email.com")
             {
-                userLocation.Location.Latitude += counter;
+                userLocation.Location.Latitude += 0.0005m;
+                //userLocation.Location.Latitude += counter;
             }
-
-            counter *= 1.1m;
         }
     }
 }

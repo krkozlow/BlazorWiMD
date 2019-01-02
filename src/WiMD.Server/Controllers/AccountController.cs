@@ -32,7 +32,7 @@ namespace WiMD.Server.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"User cannot LogIn {model.Email}");
+                _logger.LogInformation(ex, $"User failed LogIn {model.Email}");
                 return BadRequest(ex.Message);
             }
         }
@@ -48,6 +48,7 @@ namespace WiMD.Server.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogInformation(ex, $"User failed SignIn {model.Email}");
                 return BadRequest(ex.Message);
             }
         }

@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Blazor.Services;
 
 @inject HttpClient Http
-@inject LocalStorage localStorage
+@inject SessionStorage sessionStorage
 @inject IUriHelper uriHelper
 
 <form>
@@ -24,25 +24,25 @@
 
 @functions {
 
-    class User
+class User
+{
+    public string Password { get; set; }
+    public string Email { get; set; }
+    public string Token { get; set; }
+}
+
+static User user = new User();
+
+private async Task Submit()
+{
+    var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
+    await sessionStorage.SetItem<string>("token", result.Token);
+    await sessionStorage.SetItem<string>("user_name", result.Email);
+
+    if (result.Token != null)
     {
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Token { get; set; }
+        uriHelper.NavigateTo("/location");
     }
-
-    static User user = new User();
-
-    private async Task Submit()
-    {
-        var result = await Http.PostJsonAsync<User>("http://localhost:64827/api/Account/LogIn", user);
-        await localStorage.SetItem<string>("token", result.Token);
-        await localStorage.SetItem<string>("user_name", result.Email);
-
-        if (result.Token != null)
-        {
-            uriHelper.NavigateTo("/location");
-        }
-        Console.WriteLine(result.Token);
-    }
+    Console.WriteLine(result.Token);
+}
 }
