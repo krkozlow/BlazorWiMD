@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using WiMD.Authentication;
 using WiMD.Hub;
@@ -21,10 +23,15 @@ namespace WiMD.Server
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
             SecretKeyProvider = new SecretKeyProvider(configuration);
+
+            Log.Logger = new LoggerConfiguration()
+                            .MinimumLevel.Debug()
+                            .WriteTo.RollingFile(Path.Combine(env.WebRootPath, "log-{Date}.log"))
+                            .CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -64,7 +71,7 @@ namespace WiMD.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseCors(options => 
             {
@@ -84,6 +91,7 @@ namespace WiMD.Server
             }
 
             app.UseHttpsRedirection();
+            loggerFactory.AddSerilog();
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "WiMD API v1"); });
