@@ -52,9 +52,7 @@ namespace WiMD.Hub
             //MockMoving(userLocation);
 
             var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
-
             await Clients.Users(listenUsersIds).SendAsync("broadcastMessage", userLocation);
-            await Clients.Groups(user.GetPublicGroups()).SendAsync("broadcastMessage", userLocation);
         }
 
         public async override Task OnDisconnectedAsync(Exception exception)
