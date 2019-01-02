@@ -17,7 +17,16 @@ namespace WiMD.Hub
         public void ConnectUser(string userName, string connectionId)
         {
             var userToAdd = new UserConnection { ConnectionId = connectionId, Name = userName };
-            GetConnectedUsers().Add(userToAdd);
+            InitUserConnectionMapping(userToAdd);
+        }
+
+        private void InitUserConnectionMapping(UserConnection userConnection)
+        {
+            var connectionMapping = _connectionProvider.GetUsersConnectionMappings();
+            connectionMapping.Add(new UserConnectionMapping {
+                User = userConnection,
+                ListeningUsers = new List<UserConnection> { userConnection }
+            });
         }
 
         public void DisconnectUser(string userName)
@@ -40,7 +49,7 @@ namespace WiMD.Hub
         {
             var userConnectionMapping = GetUserConnectionMapping(user);
 
-            return userConnectionMapping.ListeningUsers.Select(x => x.ConnectionId).ToList();
+            return userConnectionMapping?.ListeningUsers?.Select(x => x.ConnectionId).ToList();
         }
 
         public UserConnection GetUserConnection(string userName)
@@ -57,12 +66,7 @@ namespace WiMD.Hub
         public UserConnectionMapping GetUserConnectionMapping(UserConnection user)
         {
             var connectionMapping = _connectionProvider.GetUsersConnectionMappings();
-
-            var userConnectionMapping = connectionMapping.FirstOrDefault(x => x.User == user);
-            if (userConnectionMapping == null)
-            {
-                throw new ArgumentException($"User {user.Name} has no connections.");
-            }
+            var userConnectionMapping = connectionMapping?.FirstOrDefault(x => x.User.Name == user.Name);
 
             return userConnectionMapping;
         }
@@ -70,6 +74,11 @@ namespace WiMD.Hub
         public void ListenForUser(UserConnection user, UserConnection userToListen)
         {
             var userConnectionMapping = GetUserConnectionMapping(user);
+
+            if (userConnectionMapping == null)
+            {
+                userConnectionMapping = new UserConnectionMapping();
+            }
 
             if (userConnectionMapping.ListeningUsers == null)
             {
