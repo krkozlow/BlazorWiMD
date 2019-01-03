@@ -18,6 +18,7 @@ namespace WiMD.Authentication
             _tokenProvider = tokenProvider;
         }
 
+        public bool IsConnected { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string Token { get; set; }
@@ -53,6 +54,18 @@ namespace WiMD.Authentication
             }
 
             Groups.Remove(toRemove);
+        }
+
+        public void Connect()
+        {
+            IsConnected = true;
+            //update repo
+        }
+
+        public void Disconnect()
+        {
+            IsConnected = false;
+            //update repo
         }
 
         public void GenerateToken()

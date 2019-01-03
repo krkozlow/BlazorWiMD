@@ -41,6 +41,11 @@ namespace WiMD.Authentication
             return Get(user.Email);
         }
 
+        public IEnumerable<User> GetConnectedUsers()
+        {
+            return users.Where(x => x.IsConnected == true);
+        }
+
         static IList<User> users;
     }
 }

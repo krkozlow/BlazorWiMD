@@ -9,18 +9,37 @@
 @inject IUriHelper uriHelper
 
 @page "/location"
-
 <div class="container">
     <div id="mapid">
 
     </div>
+    <select class="form-control" onchange=@DoStuff>
+        @foreach (var connectedUser in connectedUsers)
+        {
+            <option value=@connectedUser.Email>@connectedUser.Email</option>
+        }
+    </select>
 </div>
 
 @functions {
+    IList<UserLocation> connectedUsers = new List<UserLocation>
+    {
+        new UserLocation{ Email = "krzys2@email.com" },
+        new UserLocation{ Email = "krzys3@email.com" }
+    };
+    string selectedString;
     HubConnection connection;
     AspNetMonsters.Blazor.Geolocation.Location location;
     IList<UserLocation> usersLocation = new List<UserLocation>();
     IList<AspNetMonsters.Blazor.Geolocation.Location> locations = new List<AspNetMonsters.Blazor.Geolocation.Location>();
+
+    async Task DoStuff(UIChangeEventArgs e)
+    {
+        selectedString = e.Value.ToString();
+        var selectedConnectedUser = connectedUsers.First(x => x.Email == selectedString);
+        await ListenForUser(selectedConnectedUser);
+        Console.WriteLine("It is definitely: " + selectedString);
+    }
 
     protected override async Task OnInitAsync()
     {
@@ -112,13 +131,23 @@
 
     async Task SendMessage()
     {
+        Random random = new Random();
         location = await LocationService.GetLocationAsync();
+        location.Latitude +=  (decimal)random.NextDouble() * 0.01m;
+        location.Longitude += (decimal)random.NextDouble() * 0.01m;
+
         UserLocation currentUser = new UserLocation
         {
             Location = new AspNetMonsters.Blazor.Geolocation.Location { Latitude = location.Latitude, Longitude = location.Longitude }
         };
 
         await connection.InvokeAsync("Send", currentUser);
+        StateHasChanged();
+    }
+
+    async Task ListenForUser(UserLocation listenForUser)
+    {
+        await connection.InvokeAsync("ListenForUser", listenForUser);
         StateHasChanged();
     }
 
