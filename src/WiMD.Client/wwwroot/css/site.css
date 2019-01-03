@@ -124,4 +124,9 @@ app {
     #mapid {
         height: 350px;
     }
+
+    .friends-list {
+        height: 50px;
+        overflow-y: scroll;
+    }
 }
