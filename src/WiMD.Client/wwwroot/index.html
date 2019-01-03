@@ -41,7 +41,6 @@
 
         function AddLocation(latitude, longitute, userName) {
             let marker = L.marker([latitude, longitute]).addTo(layerGroup);
-            marker.bindPopup("<b>" + userName + "</b>").openPopup();
         }
 
         function CleanMarkups() {
