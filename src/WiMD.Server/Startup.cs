@@ -18,6 +18,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using WiMD.Authentication;
 using WiMD.Hub;
+using WiMD.Persistence;
 
 namespace WiMD.Server
 {
@@ -45,6 +46,9 @@ namespace WiMD.Server
             services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
             services.AddScoped<IUserFactory, UserFactory>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IDbConnectionFactory, SqliteConnectionFactory>();
+            services.AddScoped<ICommandQueryProvider, CommandQueryProvider>();
 
             services.AddSingleton<IConnectionProvider, ConnectionProvider>();
             services.AddSingleton<IConnectionService, ConnectionService>();

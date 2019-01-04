@@ -10,5 +10,6 @@ namespace WiMD.Authentication
         User Get(string email);
         User Update(User user);
         IEnumerable<User> GetConnectedUsers();
+        IEnumerable<User> GetUsers();
     }
 }

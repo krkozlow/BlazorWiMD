@@ -13,11 +13,18 @@ namespace WiMD.Authentication
     {
         private readonly IJwtTokenProvider _tokenProvider;
 
+        //For dapper
+        public User()
+        {
+
+        }
+
         public User(IJwtTokenProvider tokenProvider)
         {
             _tokenProvider = tokenProvider;
         }
 
+        public int ID { get; set; }
         public bool IsConnected { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

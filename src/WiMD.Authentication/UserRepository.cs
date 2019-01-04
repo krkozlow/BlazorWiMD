@@ -1,12 +1,23 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WiMD.Persistence;
 
 namespace WiMD.Authentication
 {
     public class UserRepository : IUserRepository
     {
+        ICommandQueryProvider _commandQueryProvider;
+        IDbConnectionFactory _connectionFactory;
+
+        public UserRepository(IDbConnectionFactory connectionFactory, ICommandQueryProvider commandQueryProvider)
+        {
+            _commandQueryProvider = commandQueryProvider;
+            _connectionFactory = connectionFactory;
+        }
+
         static UserRepository()
         {
             users = new List<User>
@@ -44,6 +55,15 @@ namespace WiMD.Authentication
         public IEnumerable<User> GetConnectedUsers()
         {
             return users.Where(x => x.IsConnected == true);
+        }
+
+        public IEnumerable<User> GetUsers()
+        {
+            var connection = _connectionFactory.Create("C:\\Users\\krzykozl\\source\\repos\\Blazor.WiMD\\database\\WiMD.db");
+
+            var result = connection.Query<User>(_commandQueryProvider.GetUsers());
+
+            return result;
         }
 
         static IList<User> users;
