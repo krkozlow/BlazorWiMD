@@ -31,6 +31,7 @@ namespace WiMD.Authentication
         public string Token { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Avatar { get; set; }
         public IList<Group> Groups { get; set; }
 
         public void ValidateGivenPassword(string password)

@@ -8,6 +8,7 @@ namespace WiMD.Authentication
     {
         User Create(User user);
         User Get(string email);
+        User Get(int id);
         User Update(User user);
         IEnumerable<User> GetConnectedUsers();
         IEnumerable<User> GetUsers();

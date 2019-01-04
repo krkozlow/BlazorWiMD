@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,63 +10,59 @@ namespace WiMD.Authentication
 {
     public class UserRepository : IUserRepository
     {
-        ICommandQueryProvider _commandQueryProvider;
-        IDbConnectionFactory _connectionFactory;
+        private readonly ICommandQueryProvider _commandQueryProvider;
+        private readonly IDbConnectionFactory _connectionFactory;
+        private string _connectionString;
 
-        public UserRepository(IDbConnectionFactory connectionFactory, ICommandQueryProvider commandQueryProvider)
+        public UserRepository(IDbConnectionFactory connectionFactory, ICommandQueryProvider commandQueryProvider, IConfiguration configuration)
         {
             _commandQueryProvider = commandQueryProvider;
             _connectionFactory = connectionFactory;
-        }
-
-        static UserRepository()
-        {
-            users = new List<User>
-            {
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("andrzej", "golota", "krzys1@email.com", "pass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("mike", "tyson", "krzys2@email.com", "pass"),
-            new UserFactory(new JwtTokenProvider(new SecretKeyProvider(null))).CreateUser("lenox", "lewis", "krzys3@email.com", "pass")
-            };
-
-            users.ElementAt(0).AddToGroup("first-group");
-            users.ElementAt(1).AddToGroup("first-group");
+            _connectionString = configuration["ConnectionString"];
         }
 
         public User Create(User user)
         {
-            users.Add(user);
+            var connection = _connectionFactory.Create(_connectionString);
+            var id = connection.Execute(_commandQueryProvider.CreateUser(user));
 
-            return user;
+            return connection.Query<User>(_commandQueryProvider.GetUser(id)).FirstOrDefault();
         }
 
         public User Get(string email)
         {
-            return users.FirstOrDefault(x => x.Email == email);
+            var connection = _connectionFactory.Create(_connectionString);
+
+            return connection.Query<User>(_commandQueryProvider.GetUser(email)).FirstOrDefault();
         }
 
         public User Update(User user)
         {
-            User toUpdate = users.First(x => x.Email == user.Email);
+            var connection = _connectionFactory.Create(_connectionString);
+            var id = connection.Execute(_commandQueryProvider.UpdateUser(user));
 
-            toUpdate = user;
-
-            return Get(user.Email);
+            return connection.Query<User>(_commandQueryProvider.GetUser(id)).FirstOrDefault();
         }
 
         public IEnumerable<User> GetConnectedUsers()
         {
-            return users.Where(x => x.IsConnected == true);
+            var connection = _connectionFactory.Create(_connectionString);
+
+            return connection.Query<User>(_commandQueryProvider.GetConnectedUsers());
         }
 
         public IEnumerable<User> GetUsers()
         {
-            var connection = _connectionFactory.Create("C:\\Users\\krzykozl\\source\\repos\\Blazor.WiMD\\database\\WiMD.db");
+            var connection = _connectionFactory.Create(_connectionString);
 
-            var result = connection.Query<User>(_commandQueryProvider.GetUsers());
-
-            return result;
+            return connection.Query<User>(_commandQueryProvider.GetUsers());
         }
 
-        static IList<User> users;
+        public User Get(int id)
+        {
+            var connection = _connectionFactory.Create(_connectionString);
+
+            return connection.Query<User>(_commandQueryProvider.GetUser(id)).FirstOrDefault();
+        }
     }
 }

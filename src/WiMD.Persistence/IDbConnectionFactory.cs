@@ -7,6 +7,6 @@ namespace WiMD.Persistence
 {
     public interface IDbConnectionFactory
     {
-        IDbConnection Create(string name);
+        IDbConnection Create(string connectionString);
     }
 }

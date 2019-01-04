@@ -7,7 +7,7 @@ namespace WiMD.Persistence
 {
     public class SqlConnectionFactory : IDbConnectionFactory
     {
-        public IDbConnection Create(string name)
+        public IDbConnection Create(string connectionString)
         {
             throw new NotImplementedException();
         }
