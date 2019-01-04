@@ -34,6 +34,7 @@ namespace WiMD.Authentication
                     user.Avatar
                 });
         }
+
         public CommandDefinition UpdateUser(User user)
         {
             return new CommandDefinition(
@@ -64,6 +65,6 @@ namespace WiMD.Authentication
                                          "FROM [User]" +
                                          "WHERE [ID] = @ID",
                                          new { ID = id});
-        }
+        }s
     }
 }

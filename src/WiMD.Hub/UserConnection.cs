@@ -8,5 +8,6 @@ namespace WiMD.Hub
     {
         public string Name { get; set; }
         public string ConnectionId { get; set; }
+        public int UserId { get; set; }
     }
 }
