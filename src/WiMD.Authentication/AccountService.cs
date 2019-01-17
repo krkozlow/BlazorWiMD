@@ -18,7 +18,7 @@ namespace WiMD.Authentication
             ValidateSignIn(user);
             User newUser = _userFactory.CreateUser(user.FirstName, user.LastName, user.Email, user.Password);
             User createdUser = _userRepository.Create(newUser);
-            //createdUser.Password = null; to be done with real db
+            createdUser.Password = null;
 
             return createdUser;
         }
@@ -28,7 +28,7 @@ namespace WiMD.Authentication
             User user = _userRepository.Get(email);
             user.ValidateGivenPassword(password);
             user.GenerateToken();
-            //user.Password = null; to be done with real db
+            user.Password = null;
 
             return user;
         }
