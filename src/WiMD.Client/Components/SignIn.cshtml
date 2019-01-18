@@ -1,0 +1,41 @@
+﻿@using WiMD.Client.Models;
+@using Microsoft.AspNetCore.Blazor.Services;
+@using WiMD.Client.api;
+
+@inject IUriHelper uriHelper
+@inject HttpClient Http
+
+<form class="form-signin">
+    <div class="form-group">
+        <label for="inputFirstName">First name</label>
+        <input type="text" class="form-control" id="inputFirstName" placeholder="First name" bind="@user.FirstName" />
+    </div>
+    <div class="form-group">
+        <label for="inputLastName">Last name</label>
+        <input type="text" class="form-control" id="inputLastName" placeholder="Last name" bind="@user.LastName" />
+    </div>
+    <div class="form-group">
+        <label for="inputEmail">Email address</label>
+        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" bind="@user.Email" />
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword">Password</label>
+        <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
+    </div>
+    <button type="button" class="btn btn-primary" onclick="@(async () => await SignIn())">SignIn</button>
+</form>
+
+@functions {
+
+    User user = new User();
+
+    async Task SignIn()
+    {
+        var result = await Http.PostJsonAsync<User>(BaseApi.SignInUrl, user);
+        if (result.Token != null)
+        {
+            uriHelper.NavigateTo("/location");
+        }
+    }
+}
