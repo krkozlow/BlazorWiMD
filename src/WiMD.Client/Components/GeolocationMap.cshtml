@@ -1,0 +1,30 @@
+﻿@using Blazor.Extensions;
+@using Blazor.Extensions.Storage;
+@using AspNetMonsters.Blazor.Geolocation;
+@using Microsoft.JSInterop;
+@using Microsoft.AspNetCore.Blazor.Services;
+@using WiMD.Client.Models;
+@using WiMD.Client.api;
+@using WiMD.Client.Services;
+
+@inject LocationService LocationService
+@inject SessionStorage sessionStorage
+@inject IUriHelper uriHelper
+@inject HttpClient Http
+
+<div class="col-md-8" id="mapid">
+
+</div>
+
+@functions {
+    AspNetMonsters.Blazor.Geolocation.Location location;
+
+    protected override async Task OnInitAsync()
+    {
+        location = await LocationService.GetLocationAsync();
+
+        await JSRuntime.Current.InvokeAsync<bool>("SetMap", location.Latitude, location.Longitude);
+
+        await base.OnInitAsync();
+    }
+}

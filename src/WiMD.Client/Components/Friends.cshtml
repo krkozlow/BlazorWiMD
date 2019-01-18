@@ -1,0 +1,32 @@
+﻿@using Blazor.Extensions;
+@using Blazor.Extensions.Storage;
+@using AspNetMonsters.Blazor.Geolocation;
+@using Microsoft.JSInterop;
+@using Microsoft.AspNetCore.Blazor.Services;
+@using WiMD.Client.Models;
+
+@inject LocationService LocationService
+@inject SessionStorage sessionStorage
+@inject IUriHelper uriHelper
+@inject HttpClient Http
+
+<div class="list-group col-md-4 friends-list">
+    @foreach (var connectedUser in @ConnectedUsers)
+    {
+        <button type="button" class="list-group-item list-group-item-action" onclick=@(() => HandleButtonClick(connectedUser))>@connectedUser.Email</button>
+    }
+</div>
+
+@functions {
+
+    [Parameter]
+    IEnumerable<UserGeolocation> ConnectedUsers { get; set; }
+
+    [Parameter]
+    Func<UserGeolocation, Task> AddListenForUserAction { get; set; }
+
+    async Task HandleButtonClick(UserGeolocation e)
+    {
+        await AddListenForUserAction.Invoke(e);
+    }
+}
