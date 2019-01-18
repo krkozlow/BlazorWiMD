@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WiMD.Common\WiMD.Common.csproj" />
     <ProjectReference Include="..\WiMD.GeolocationContext\WiMD.GeolocationContext.csproj" />
-    <ProjectReference Include="..\WiMD.IdentityAccess\WiMD.IdentityAccess.csproj" />
+    <ProjectReference Include="..\WiMD.IdentityAccess\WiMD.IdentityAccessContext.csproj" />
     <ProjectReference Include="..\WiMD.Persistence\WiMD.Persistence.csproj" />
   </ItemGroup>
 

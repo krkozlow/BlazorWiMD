@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WiMD.Persistence", "WiMD.Pe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityAccessContext", "IdentityAccessContext", "{F22D6639-62A7-4145-9D84-1B6AF7A260F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMD.IdentityAccess", "WiMD.IdentityAccess\WiMD.IdentityAccess.csproj", "{A7822955-75E8-477A-A1FC-75E23F7DD9F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMD.IdentityAccessContext", "WiMD.IdentityAccess\WiMD.IdentityAccessContext.csproj", "{A7822955-75E8-477A-A1FC-75E23F7DD9F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiMD.Common", "WiMD.Common\WiMD.Common.csproj", "{7929E343-963C-494B-93CA-E629F839B23D}"
 EndProject
