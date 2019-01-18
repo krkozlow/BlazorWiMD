@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WiMD.Authentication;
+using WiMD.IdentityAccess.Application;
+using WiMD.IdentityAccess.Domain.Model;
 
 namespace WiMD.Server.Controllers
 {

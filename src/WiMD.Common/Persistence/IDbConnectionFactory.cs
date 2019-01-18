@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace WiMD.Persistence
+namespace WiMD.Common.Persistence
 {
     public interface IDbConnectionFactory
     {

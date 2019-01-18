@@ -18,8 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WiMD.Authentication\WiMD.Authentication.csproj" />
-    <ProjectReference Include="..\WiMD.Hub\WiMD.Hub.csproj" />
+    <ProjectReference Include="..\WiMD.Common\WiMD.Common.csproj" />
+    <ProjectReference Include="..\WiMD.GeolocationContext\WiMD.GeolocationContext.csproj" />
+    <ProjectReference Include="..\WiMD.IdentityAccess\WiMD.IdentityAccess.csproj" />
+    <ProjectReference Include="..\WiMD.Persistence\WiMD.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

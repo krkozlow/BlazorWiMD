@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace WiMD.Authentication
+namespace WiMD.IdentityAccess.Infrastructure
 {
     public class SecretKeyProvider : ISecretKeyProvider
     {

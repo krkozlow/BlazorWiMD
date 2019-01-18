@@ -16,9 +16,15 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
-using WiMD.Authentication;
-using WiMD.Hub;
+using WiMD.Common.Persistence;
+using WiMD.GeolocationContext.Application;
+using WiMD.GeolocationContext.Infrastructure;
+using WiMD.IdentityAccess.Application;
+using WiMD.IdentityAccess.Domain.Model;
+using WiMD.IdentityAccess.Infrastructure;
 using WiMD.Persistence;
+using WiMD.Server.Extensions;
+using WiMD.Server.Hubs;
 
 namespace WiMD.Server
 {
@@ -27,7 +33,7 @@ namespace WiMD.Server
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
-            SecretKeyProvider = new SecretKeyProvider(configuration);
+            SecretKeyProvider = new SecretKeyProvider();
 
             Log.Logger = new LoggerConfiguration()
                             .MinimumLevel.Debug()
@@ -48,7 +54,7 @@ namespace WiMD.Server
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDbConnectionFactory, SqliteConnectionFactory>();
-            services.AddScoped<ICommandQueryProvider, CommandQueryProvider>();
+            services.AddScoped<IUserCommandQueryProvider, UserCommandQueryProvider>();
 
             services.AddSingleton<IConnectionProvider, ConnectionProvider>();
             services.AddSingleton<IConnectionService, ConnectionService>();
@@ -99,7 +105,7 @@ namespace WiMD.Server
             app.UseAuthentication();
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "WiMD API v1"); });
-            app.UseSignalR(routes => routes.MapHub<LocationHub>("/locationhub"));
+            app.UseSignalR(routes => routes.MapHub<GeolocationHub>("/geolocationhub"));
             app.UseMvc();
         }
     }

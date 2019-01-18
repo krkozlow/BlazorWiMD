@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using WiMD.IdentityAccess.Domain.Model;
 
-namespace WiMD.Authentication
+namespace WiMD.Persistence
 {
-    public class CommandQueryProvider : ICommandQueryProvider
+    public class UserCommandQueryProvider : IUserCommandQueryProvider
     {
         public CommandDefinition GetUsers()
         {
@@ -56,7 +57,7 @@ namespace WiMD.Authentication
             return new CommandDefinition(@"SELECT [ID], [FirstName], [LastName], [Email], [Password]" +
                                          "FROM [User]" +
                                          "WHERE [Email] = @Email",
-                                         new { Email = email});
+                                         new { Email = email });
         }
 
         public CommandDefinition GetUser(int id)
@@ -64,7 +65,7 @@ namespace WiMD.Authentication
             return new CommandDefinition(@"SELECT [ID], [FirstName], [LastName], [Email], [Password]" +
                                          "FROM [User]" +
                                          "WHERE [ID] = @ID",
-                                         new { ID = id});
+                                         new { ID = id });
         }
     }
 }

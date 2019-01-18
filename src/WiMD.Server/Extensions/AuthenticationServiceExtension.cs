@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
+using WiMD.IdentityAccess.Infrastructure;
 
-namespace WiMD.Authentication
+namespace WiMD.Server.Extensions
 {
     public static class AuthenticationServiceExtension
     {
         const string accessTokenConst = "access_token";
-        const string locationHubRouteConst = "/locationhub";
+        const string locationHubRouteConst = "/geolocationhub";
 
         public static void AddWiMDAuthentication(this IServiceCollection services, ISecretKeyProvider secretKeyProvider)
         {
@@ -37,7 +37,7 @@ namespace WiMD.Authentication
                         var accessToken = context.Request.Query[accessTokenConst];
 
                         var path = context.HttpContext.Request.Path;
-                        if (!String.IsNullOrEmpty(accessToken) && 
+                        if (!String.IsNullOrEmpty(accessToken) &&
                             path.StartsWithSegments(locationHubRouteConst))
                         {
                             context.Token = accessToken;

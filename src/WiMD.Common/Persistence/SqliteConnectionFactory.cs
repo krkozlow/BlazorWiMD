@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.IO;
 using System.Text;
 
-namespace WiMD.Persistence
+namespace WiMD.Common.Persistence
 {
     public class SqliteConnectionFactory : IDbConnectionFactory
     {
