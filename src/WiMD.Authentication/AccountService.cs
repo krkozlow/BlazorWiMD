@@ -6,11 +6,13 @@ namespace WiMD.Authentication
     {
         private readonly IUserFactory _userFactory;
         private readonly IUserRepository _userRepository;
+        private readonly IJwtTokenProvider _jwtTokenProvider;
 
-        public AccountService(IUserFactory userFactory, IUserRepository userRepository)
+        public AccountService(IUserFactory userFactory, IUserRepository userRepository, IJwtTokenProvider jwtTokenProvider)
         {
             _userFactory = userFactory;
             _userRepository = userRepository;
+            _jwtTokenProvider = jwtTokenProvider;
         }
 
         public User SignIn(User user)
@@ -26,8 +28,9 @@ namespace WiMD.Authentication
         public User LogIn(string email, string password)
         {
             User user = _userRepository.Get(email);
-            user.ValidateGivenPassword(password);
-            user.GenerateToken();
+            ValidateGivenPassword(user, password);
+
+            user.Token = _jwtTokenProvider.CreateJwtToken(user.Email);
             user.Password = null;
 
             return user;
@@ -38,6 +41,13 @@ namespace WiMD.Authentication
             if (_userRepository.Get(user.Email) != null)
             {
                 throw new ArgumentException("User with that email already exist!.");
+            }
+        }
+        private void ValidateGivenPassword(User user,string givenPassword)
+        {
+            if (CryptographyHelper.HashPassword(givenPassword) != user.Password)
+            {
+                throw new ArgumentException("Given password is not valid.");
             }
         }
     }

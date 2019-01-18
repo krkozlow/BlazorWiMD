@@ -7,16 +7,9 @@ namespace WiMD.Authentication
 {
     public class UserFactory : IUserFactory
     {
-        private readonly IJwtTokenProvider _tokenProvider;
-
-        public UserFactory(IJwtTokenProvider tokenProvider)
-        {
-            _tokenProvider = tokenProvider;
-        }
-
         public User CreateUser(string firstName, string lastName, string email, string password)
         {
-            User user = new User(_tokenProvider);
+            User user = new User();
             ValidateEmail(email);
             ValidatePassword(password);
 

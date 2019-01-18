@@ -11,19 +11,6 @@ namespace WiMD.Authentication
 {
     public class User
     {
-        private readonly IJwtTokenProvider _tokenProvider;
-
-        //For dapper
-        public User()
-        {
-
-        }
-
-        public User(IJwtTokenProvider tokenProvider)
-        {
-            _tokenProvider = tokenProvider;
-        }
-
         public int ID { get; set; }
         public bool IsConnected { get; set; }
         public string Email { get; set; }
@@ -67,18 +54,11 @@ namespace WiMD.Authentication
         public void Connect()
         {
             IsConnected = true;
-            //update repo
         }
 
         public void Disconnect()
         {
             IsConnected = false;
-            //update repo
-        }
-
-        public void GenerateToken()
-        {
-            Token = _tokenProvider.CreateJwtToken(Email);
         }
     }
 }

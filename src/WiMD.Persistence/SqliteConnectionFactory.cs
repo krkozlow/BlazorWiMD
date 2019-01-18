@@ -15,7 +15,6 @@ namespace WiMD.Persistence
         {
             if (_dbConnection == null)
             {
-                //Data Source=c:\mydb.db;Version=3;
                 _dbConnection = new SQLiteConnection(connectionString);
                 _dbConnection.Open();
             }
