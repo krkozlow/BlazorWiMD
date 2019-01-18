@@ -23,14 +23,14 @@
         <label for="inputPassword">Password</label>
         <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
     </div>
-    <button type="button" class="btn btn-primary" onclick="@(async () => await SignIn())">SignIn</button>
+    <button type="button" class="btn btn-primary" onclick="@(async () => await SignInUser())">SignIn</button>
 </form>
 
 @functions {
 
     User user = new User();
 
-    async Task SignIn()
+    async Task SignInUser()
     {
         var result = await Http.PostJsonAsync<User>(BaseApi.SignInUrl, user);
         if (result.Token != null)

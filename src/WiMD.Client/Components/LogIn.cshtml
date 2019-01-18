@@ -1,0 +1,37 @@
+﻿@using Blazor.Extensions.Storage;
+@using Microsoft.AspNetCore.Blazor.Services;
+@using WiMD.Client.api;
+@using WiMD.Client.Models;
+
+@inject HttpClient Http
+@inject SessionStorage sessionStorage
+@inject IUriHelper uriHelper
+
+<form>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="email" class="form-control" id="inputEmail1" aria-describedby="emailHelp" placeholder="Enter email" bind="@user.Email" />
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="inputPassword" placeholder="Password" bind="@user.Password" />
+    </div>
+    <button type="button" class="btn btn-primary" onclick="@(async () => await LogInUser())">LogIn</button>
+</form>
+
+@functions {
+
+    User user = new User();
+
+    private async Task LogInUser()
+    {
+        var result = await Http.PostJsonAsync<User>(BaseApi.LogInUrl, user);
+        await sessionStorage.SetItem<string>("token", result.Token);
+
+        if (result.Token != null)
+        {
+            uriHelper.NavigateTo("/location");
+        }
+    }
+}
