@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WiMD.GeolocationContext\WiMD.GeolocationContext.csproj" />
-    <ProjectReference Include="..\WiMD.IdentityAccess\WiMD.IdentityAccessContext.csproj" />
+    <ProjectReference Include="..\WiMD.IdentityAccessContext\WiMD.IdentityAccessContext.csproj" />
   </ItemGroup>
 
 </Project>
