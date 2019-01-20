@@ -18,6 +18,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using WiMD.Common.Persistence;
 using WiMD.GeolocationContext.Application;
+using WiMD.GeolocationContext.Domain.Model;
 using WiMD.GeolocationContext.Infrastructure;
 using WiMD.IdentityAccess.Application;
 using WiMD.IdentityAccess.Domain.Model;
@@ -51,11 +52,12 @@ namespace WiMD.Server
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
             services.AddScoped<IUserFactory, UserFactory>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IDbConnectionFactory, SqliteConnectionFactory>();
-            services.AddScoped<IUserCommandQueryProvider, UserCommandQueryProvider>();
+            services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IDbConnectionFactory, SqliteConnectionFactory>();
+            services.AddSingleton<IUserCommandQueryProvider, UserCommandQueryProvider>();
 
+            services.AddSingleton<IUserConnectionCommandQueryProvider, UserConnectionCommandQueryProvider>();
+            services.AddSingleton<IUserConnectionRepository, UserConnectionRepository>();
             services.AddSingleton<IConnectionProvider, ConnectionProvider>();
             services.AddSingleton<IConnectionService, ConnectionService>();
 

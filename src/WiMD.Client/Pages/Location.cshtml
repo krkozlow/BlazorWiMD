@@ -25,11 +25,13 @@
 
     async Task AddListenForUserAction(UserGeolocation userGeolocation)
     {
+        Console.WriteLine("AddListenForUserAction");
         await hub.ListenForUser(userGeolocation);
     }
 
     protected override async Task OnInitAsync()
     {
+        Console.WriteLine("OnInitAsync");
         await RedirectionHelper.ForUnathorizeUserRedirectToLoginPage(sessionStorage, uriHelper);
         var hubConnection = await HubConnectionProvider.CreateHubConnection(BaseApi.GeolocationHubUrl, sessionStorage);
         hub = new GeolocationHub(hubConnection, LocationService, Http);
@@ -47,11 +49,13 @@
         Console.WriteLine("OnAfterRenderAsync");
         await Task.Delay(5000);
         await hub.SendCurrentUserGeolocation();
+        StateHasChanged();
         await base.OnAfterRenderAsync();
     }
 
     void UpdateViewAfterHandlerUserGeolocation(IList<UserGeolocation> usersLocation)
     {
+        Console.WriteLine("UpdateViewAfterHandlerUserGeolocation");
         JSRuntime.Current.InvokeAsync<bool>("CleanMarkups");
 
         foreach (var userLocation in usersLocation)

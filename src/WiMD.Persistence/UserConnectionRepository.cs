@@ -22,12 +22,22 @@ namespace WiMD.Persistence
             _connectionString = configuration["ConnectionString"];
         }
 
-        public UserConnection Get(int id)
+        public UserConnection Get(long id)
         {
             var connection = _connectionFactory.Create(_connectionString);
             CommandDefinition commandDefinition = new CommandDefinition(@"SELECT [Id], [ConnectionId], [UserId]" +
                                                                          "FROM [UserConnection]" +
                                                                          "WHERE [Id] = @Id", new { Id = id });
+
+            return connection.Query<UserConnection>(commandDefinition).FirstOrDefault();
+        }
+
+        public UserConnection GetByUserId(long userId)
+        {
+            var connection = _connectionFactory.Create(_connectionString);
+            CommandDefinition commandDefinition = new CommandDefinition(@"SELECT [Id], [ConnectionId], [UserId]" +
+                                                                         "FROM [UserConnection]" +
+                                                                         "WHERE [UserId] = @UserId", new { UserId = userId });
 
             return connection.Query<UserConnection>(commandDefinition).FirstOrDefault();
         }
@@ -47,15 +57,16 @@ namespace WiMD.Persistence
             var connection = _connectionFactory.Create(_connectionString);
             CommandDefinition commandDefinition = new CommandDefinition(
                 "INSERT INTO [UserConnection] ([ConnectionId], [UserId])" +
-                "VALUES(@ConnectionId, @UserId)", new
+                "VALUES(@ConnectionId, @UserId);" +
+                "SELECT last_insert_rowid()", new
                 {
                     user.ConnectionId,
                     user.UserId
                 });
 
-            var id = connection.Execute(new CommandDefinition());
+            var createdId = connection.Query<long>(commandDefinition).First();
 
-            return Get(id);
+            return Get(createdId);
         }
 
         public void Delete(UserConnection user)
@@ -97,6 +108,11 @@ namespace WiMD.Persistence
                 });
 
             return connection.Query<string>(commandDefinition);
+        }
+
+        public UserConnection Update(UserConnection user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

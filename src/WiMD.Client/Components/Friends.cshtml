@@ -27,6 +27,7 @@
 
     async Task HandleButtonClick(UserGeolocation e)
     {
+        Console.WriteLine($"HandleButtonClick");
         await AddListenForUserAction.Invoke(e);
     }
 }

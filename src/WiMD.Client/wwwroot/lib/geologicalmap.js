@@ -1,6 +1,7 @@
 ﻿var mymap;
 var layerGroup;
 function SetMap(latitude, longitute) {
+    console.log('SetMap lat' + latitude + ' long ' + longitute);
     mymap = L.map('mapid').setView([latitude, longitute], 13);
     layerGroup = L.layerGroup().addTo(mymap);
 
@@ -10,12 +11,16 @@ function SetMap(latitude, longitute) {
         id: 'mapbox.streets',
         accessToken: 'your.mapbox.access.token'
     }).addTo(mymap);
+
+    AddLocation(latitude, longitute, "");
 }
 
 function AddLocation(latitude, longitute, userName) {
+    console.log('AddLocation');
     let marker = L.marker([latitude, longitute]).addTo(layerGroup);
 }
 
 function CleanMarkups() {
+    console.log('CleanMarkups');
     layerGroup.clearLayers();
 }

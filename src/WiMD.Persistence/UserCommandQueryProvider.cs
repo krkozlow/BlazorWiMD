@@ -40,9 +40,10 @@ namespace WiMD.Persistence
         {
             return new CommandDefinition(
                 "UPDATE [User] " +
-                "SET FirstName = @FirstName, LastName = @LastName, Email = @Email, Password = @Password, Avatar = @Avatar, IsConnected = @IsConnected" +
-                "WHERE [id] = @Id", new
+                "SET FirstName = @FirstName, LastName = @LastName, Email = @Email, Password = @Password, Avatar = @Avatar, IsConnected = @IsConnected " +
+                "WHERE ID = @Id", new
                 {
+                    user.Id,
                     user.FirstName,
                     user.LastName,
                     user.Email,

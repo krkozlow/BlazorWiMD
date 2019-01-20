@@ -29,15 +29,23 @@ namespace WiMD.Server.Hubs
 
         public async override Task OnConnectedAsync()
         {
-            var user = _userRepository.Get(Context.User.Identity.Name);
-            user.Connect();
-            user = _userRepository.Update(user);
+            try
+            {
+                var user = _userRepository.Get(Context.User.Identity.Name);
+                user.Connect();
+                user = _userRepository.Update(user);
 
-            _connectionService.ConnectUser(user.Email, Context.ConnectionId);
+                _connectionService.ConnectUser(user, Context.ConnectionId);
 
-            _logger.LogError($"{user.Email} connected");
+                _logger.LogInformation($"{user.Email} connected");
 
-            await base.OnConnectedAsync();
+                await base.OnConnectedAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"OnConnectedAsync failed for user {Context.User.Identity.Name}");
+                throw;
+            }
         }
 
         public async Task AddToGroup(string groupName)
@@ -58,15 +66,26 @@ namespace WiMD.Server.Hubs
 
         public async Task Send(UserGeolocation userLocation)
         {
-            var userName = Context.User.Identity.Name;
-            userLocation.Email = userName;
+            try
+            {
+                var userName = Context.User.Identity.Name;
+                userLocation.Email = userName;
 
-            var user = _userRepository.Get(userName);
-            var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
+                var user = _userRepository.Get(userName);
+                var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
 
-            _logger.LogError($"{userLocation.Email} send lat {userLocation.Geolocation.Latitude} long {userLocation.Geolocation.Longitude}. Connected users {string.Join(",", listenUsersIds)}");
+                if (listenUsersIds.Any())
+                {
+                    _logger.LogInformation($"{userLocation.Email} send lat {userLocation.Location.Latitude} long {userLocation.Location.Longitude}. Connected users {string.Join(",", listenUsersIds)}");
+                }
 
-            await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
+                await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                throw;
+            }
         }
 
         public async Task ListenForUser(UserGeolocation listenForUser)
@@ -74,7 +93,7 @@ namespace WiMD.Server.Hubs
             var currentUserConnection = _connectionService.GetUserConnection(Context.User.Identity.Name);
             var userToListenConnection = _connectionService.GetUserConnection(listenForUser.Email);
 
-            _connectionService.ListenForUser(userToListenConnection, currentUserConnection);
+            _connectionService.ListenForUser(currentUserConnection, userToListenConnection);
         }
 
         public async override Task OnDisconnectedAsync(Exception exception)

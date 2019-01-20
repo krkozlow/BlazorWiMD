@@ -22,7 +22,8 @@ namespace WiMD.Client.Services
         private Action<IList<UserGeolocation>> _updateView;
 
         const string serverActionName = "broadcastMessage";
-        const string sendUserGeolocation = "SendUserGeolocation";
+        //const string sendUserGeolocation = "SendUserGeolocation";
+        const string sendUserGeolocation = "Send";
 
         public GeolocationHub(HubConnection connection, LocationService locationService, HttpClient http)
         {
@@ -33,34 +34,40 @@ namespace WiMD.Client.Services
 
         public void RegisterGeolocationHandler(Action<IList<UserGeolocation>> updateView)
         {
+            Console.WriteLine("RegisterGeolocationHandler");
             _updateView = updateView;
             _connection.On<UserGeolocation>(serverActionName, HandleCurrentUserGeolocation);
         }
 
         public async Task Start()
         {
+            Console.WriteLine("Start");
             await _connection.StartAsync();
         }
 
         public async Task ListenForUser(UserGeolocation listenForUser)
         {
+            Console.WriteLine("ListenForUser");
             var selectedConnectedUser = connectedUsers.First(x => x.Email == listenForUser.Email);
             await _connection.InvokeAsync("ListenForUser", selectedConnectedUser);
         }
 
         public async Task<IEnumerable<UserGeolocation>> GetConnectedUsers()
         {
+            Console.WriteLine("GetConnectedUsers");
             await InitializeConnectedUsers();
             return connectedUsers;
         }
 
         async Task InitializeConnectedUsers()
         {
+            Console.WriteLine("InitializeConnectedUsers");
             this.connectedUsers = await _http. GetJsonAsync<IEnumerable<UserGeolocation>>(BaseApi.GetConnectedUserUrl);
         }
 
         public async Task SendCurrentUserGeolocation()
         {
+            Console.WriteLine("SendCurrentUserGeolocation");
             Random random = new Random();
             var location = await _locationService.GetLocationAsync();
             location.Latitude += (decimal)random.NextDouble() * 0.01m;
@@ -72,11 +79,12 @@ namespace WiMD.Client.Services
             };
 
             //now its called 'Send'
-            await _connection.InvokeAsync(sendUserGeolocation, currentUser);
+            await _connection.InvokeAsync("Send", currentUser);
         }
 
         Task HandleCurrentUserGeolocation(UserGeolocation userGeolocation)
         {
+            Console.WriteLine("HandleCurrentUserGeolocation");
             if (_usersLocation.Any(x => x.Email == userGeolocation.Email))
             {
                 var locationToUpdate = _usersLocation.First(x => x.Email == userGeolocation.Email);

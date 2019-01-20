@@ -8,6 +8,6 @@ namespace WiMD.GeolocationContext.Domain.Model
     public class UserGeolocation : ValueObject
     {
         public string Email { get; set; }
-        public Geolocation Geolocation { get; set; }
+        public Geolocation Location { get; set; }
     }
 }

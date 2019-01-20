@@ -16,6 +16,7 @@ namespace WiMD.GeolocationContext.Infrastructure
         }
 
         public IList<UserConnection> GetConnectedUsers()
+
         {
             return _usersConnectionMappings.Select(x => x.User).ToList();
         }

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WiMD.Common\WiMD.Common.csproj" />
+    <ProjectReference Include="..\WiMD.IdentityAccessContext\WiMD.IdentityAccessContext.csproj" />
   </ItemGroup>
 
 </Project>

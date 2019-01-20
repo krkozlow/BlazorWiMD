@@ -40,9 +40,9 @@ namespace WiMD.Persistence
         public User Update(User user)
         {
             var connection = _connectionFactory.Create(_connectionString);
-            var id = connection.Execute(_commandQueryProvider.UpdateUser(user));
+            connection.Execute(_commandQueryProvider.UpdateUser(user));
 
-            return connection.Query<User>(_commandQueryProvider.GetUser(id)).FirstOrDefault();
+            return connection.Query<User>(_commandQueryProvider.GetUser(user.Id)).FirstOrDefault();
         }
 
         public IEnumerable<User> GetConnectedUsers()
