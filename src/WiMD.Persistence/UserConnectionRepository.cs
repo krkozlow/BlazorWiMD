@@ -72,12 +72,23 @@ namespace WiMD.Persistence
         public void Delete(UserConnection user)
         {
             var connection = _connectionFactory.Create(_connectionString);
+
+            CommandDefinition removeMappingsCommandDefinition = new CommandDefinition(
+                "DELETE FROM [UserConnectionMapping]" +
+                "WHERE [BaseConnectionId] = @ConnectionId OR [ListenForConnectionId] = @ConnectionId", new
+                {
+                    ConnectionId = user.ConnectionId
+                });
+
             CommandDefinition commandDefinition = new CommandDefinition(
                 "DELETE FROM [UserConnection]" +
                 "WHERE [ConnectionId] = @ConnectionId", new
                 {
                     ConnectionId = user.ConnectionId
                 });
+
+            connection.Execute(removeMappingsCommandDefinition);
+            connection.Execute(commandDefinition);
         }
 
         public int ListenForUser(UserConnection user, UserConnection listenUser)

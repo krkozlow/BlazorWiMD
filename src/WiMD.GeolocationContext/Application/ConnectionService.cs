@@ -25,10 +25,8 @@ namespace WiMD.GeolocationContext.Application
         {
             var userToAdd = new UserConnection { ConnectionId = connectionId, Name = user.Email, UserId = user.Id };
 
-            _userConnectionRepository.Create(userToAdd);
-
-            //var userToAdd = new UserConnection { ConnectionId = connectionId, Name = userName };
-            //InitUserConnectionMapping(userToAdd);
+            var createdUserConnection = _userConnectionRepository.Create(userToAdd);
+            ListenForUser(createdUserConnection, createdUserConnection);
         }
 
         private void InitUserConnectionMapping(UserConnection userConnection)
@@ -41,44 +39,15 @@ namespace WiMD.GeolocationContext.Application
             });
         }
 
-        public void DisconnectUser(string userName)
+        public void DisconnectUser(User user)
         {
-            var userToDisconnect = GetConnectedUsers().FirstOrDefault(x => x.Name == userName);
-            if (userToDisconnect == null)
-            {
-                throw new ArgumentException($"User {userName} is not connected already.");
-            }
-
-            GetConnectedUsers().Remove(userToDisconnect);
+            var userConnection = _userConnectionRepository.Get(user.Id);
+            _userConnectionRepository.Delete(userConnection);
         }
 
         public IList<UserConnection> GetConnectedUsers()
         {
             return _connectionProvider.GetConnectedUsers();
-        }
-
-        public IReadOnlyList<string> GetListenUsersConnectionIds(IEnumerable<int> ids)
-        {
-            var result = new List<string>();
-            //foreach (var id in ids)
-            //{
-            //    var userConnection = _userConnectionRepository.GetByUserId(id);
-
-            //}
-            //var listenUsers = _userConnectionRepository.GetAllListeningUsers(user);
-            //if (listenUsers.Any())
-            //{
-            //    result = listenUsers.ToList();
-            //}
-
-            return result;
-            //var userConnectionMapping = GetUserConnectionMapping(user);
-
-            //if (userConnectionMapping?.ListeningUsers?.Select(x => x.ConnectionId).ToList() != null && userConnectionMapping.ListeningUsers.Select(x => x.ConnectionId).ToList().Any())
-            //{
-            //    result = userConnectionMapping?.ListeningUsers?.Select(x => x.ConnectionId).ToList();
-            //}
-            //return result;
         }
 
         public IReadOnlyList<string> GetListenUsersIds(UserConnection user)
@@ -91,13 +60,6 @@ namespace WiMD.GeolocationContext.Application
             }
 
             return result;
-            //var userConnectionMapping = GetUserConnectionMapping(user);
-
-            //if (userConnectionMapping?.ListeningUsers?.Select(x => x.ConnectionId).ToList() != null && userConnectionMapping.ListeningUsers.Select(x => x.ConnectionId).ToList().Any())
-            //{
-            //    result = userConnectionMapping?.ListeningUsers?.Select(x => x.ConnectionId).ToList();
-            //}
-            //return result;
         }
 
         public UserConnection GetUserConnection(string userName)
@@ -110,11 +72,6 @@ namespace WiMD.GeolocationContext.Application
             }
 
             return userConnection;
-            //var user = GetConnectedUsers().FirstOrDefault(x => x.Name == userName);
-            //if (user == null)
-            //{
-            //    throw new ArgumentException($"User {userName} is not connected.");
-            //}
         }
 
         public UserConnectionMapping GetUserConnectionMapping(UserConnection user)
@@ -128,18 +85,6 @@ namespace WiMD.GeolocationContext.Application
         public void ListenForUser(UserConnection user, UserConnection userToListen)
         {
             _userConnectionRepository.ListenForUser(user, userToListen);
-            //var userConnectionMapping = GetUserConnectionMapping(user);
-
-            //if (userConnectionMapping == null)
-            //{
-            //    userConnectionMapping = new UserConnectionMapping();
-            //}
-
-            //if (userConnectionMapping.ListeningUsers == null)
-            //{
-            //    userConnectionMapping.ListeningUsers = new List<UserConnection>();
-            //}
-            //userConnectionMapping.ListeningUsers.Add(userToListen);
         }
 
         public void StopListenForUser(UserConnection user, UserConnection userToStopListen)

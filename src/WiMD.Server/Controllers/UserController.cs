@@ -26,8 +26,7 @@ namespace WiMD.Server.Controllers
         {
             try
             {
-                var users = _userRepository.GetUsers().ToArray();
-                //var users = _userRepository.GetConnectedUsers().ToArray();
+                var users = _userRepository.GetConnectedUsers().ToArray();
                 return users;
             }
             catch (Exception ex)

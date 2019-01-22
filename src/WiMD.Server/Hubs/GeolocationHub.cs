@@ -36,7 +36,6 @@ namespace WiMD.Server.Hubs
                 user = _userRepository.Update(user);
 
                 _connectionService.ConnectUser(user, Context.ConnectionId);
-
                 _logger.LogInformation($"{user.Email} connected");
 
                 await base.OnConnectedAsync();
@@ -68,16 +67,10 @@ namespace WiMD.Server.Hubs
         {
             try
             {
-                var userName = Context.User.Identity.Name;
-                userLocation.Email = userName;
+                userLocation.Email = Context.User.Identity.Name;
 
-                var user = _userRepository.Get(userName);
-                var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId });
-
-                if (listenUsersIds.Any())
-                {
-                    _logger.LogInformation($"{userLocation.Email} send lat {userLocation.Location.Latitude} long {userLocation.Location.Longitude}. Connected users {string.Join(",", listenUsersIds)}");
-                }
+                var user = _userRepository.Get(userLocation.Email);
+                var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId, UserId = user.Id });
 
                 await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
             }
@@ -98,14 +91,22 @@ namespace WiMD.Server.Hubs
 
         public async override Task OnDisconnectedAsync(Exception exception)
         {
-            var user = _userRepository.Get(Context.User.Identity.Name);
-            user.Disconnect();
-            user = _userRepository.Update(user);
+            try
+            {
+                var user = _userRepository.Get(Context.User.Identity.Name);
+                _connectionService.DisconnectUser(user);
 
-            _connectionService.DisconnectUser(user.Email);
+                user.Disconnect();
+                user = _userRepository.Update(user);
 
-            _logger.LogError($"{user.Email} disconnected");
-            await base.OnDisconnectedAsync(exception);
+                _logger.LogInformation($"{user.Email} disconnected");
+                await base.OnDisconnectedAsync(exception);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to dissconect", ex.Message);
+                throw;
+            }
         }
     }
 }

@@ -84,7 +84,7 @@ namespace WiMD.Client.Services
 
         Task HandleCurrentUserGeolocation(UserGeolocation userGeolocation)
         {
-            Console.WriteLine("HandleCurrentUserGeolocation");
+            userGeolocation.AddedTime = DateTime.UtcNow;
             if (_usersLocation.Any(x => x.Email == userGeolocation.Email))
             {
                 var locationToUpdate = _usersLocation.First(x => x.Email == userGeolocation.Email);
@@ -94,10 +94,26 @@ namespace WiMD.Client.Services
             {
                 _usersLocation.Add(userGeolocation);
             }
+            RemoveNotUpdatingUsersLocation();
 
             _updateView.Invoke(_usersLocation);
 
             return Task.CompletedTask;
+        }
+
+        void RemoveNotUpdatingUsersLocation()
+        {
+            var currentTime = DateTime.UtcNow;
+            const int tresholdInSecconds = 30;
+            foreach (var user in _usersLocation)
+            {
+                TimeSpan difference = DateTime.UtcNow - user.AddedTime;
+                if (difference.TotalSeconds > tresholdInSecconds)
+                {
+                    _usersLocation.Remove(user);
+                    Console.WriteLine($"{user.Email} removed.");
+                }
+            }
         }
     }
 }

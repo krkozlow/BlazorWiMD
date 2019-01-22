@@ -14,11 +14,10 @@ namespace WiMD.GeolocationContext.Application
         UserConnectionMapping GetUserConnectionMapping(UserConnection user);
 
         void ConnectUser(User user, string connectionId);
-        void DisconnectUser(string userName);
+        void DisconnectUser(User user);
 
         void ListenForUser(UserConnection user, UserConnection userToListen);
         void StopListenForUser(UserConnection user, UserConnection userToStopListen);
         IReadOnlyList<string> GetListenUsersIds(UserConnection user);
-        IReadOnlyList<string> GetListenUsersConnectionIds(IEnumerable<int> ids);
     }
 }

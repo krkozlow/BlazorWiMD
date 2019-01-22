@@ -55,11 +55,12 @@
 
     void UpdateViewAfterHandlerUserGeolocation(IList<UserGeolocation> usersLocation)
     {
-        Console.WriteLine("UpdateViewAfterHandlerUserGeolocation");
+        Console.WriteLine("UpdateViewAfterHandlerUserGeolocation " + usersLocation.Count);
         JSRuntime.Current.InvokeAsync<bool>("CleanMarkups");
 
         foreach (var userLocation in usersLocation)
         {
+            Console.WriteLine($"{userLocation.Email}");
             JSRuntime.Current.InvokeAsync<bool>("AddLocation", userLocation.Location.Latitude, userLocation.Location.Longitude, userLocation.Email);
         }
     }
