@@ -49,6 +49,7 @@
         Console.WriteLine("OnAfterRenderAsync");
         await Task.Delay(5000);
         await hub.SendCurrentUserGeolocation();
+        connectedUsers = await hub.GetConnectedUsers();
         StateHasChanged();
         await base.OnAfterRenderAsync();
     }
