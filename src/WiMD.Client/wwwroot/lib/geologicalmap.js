@@ -11,6 +11,8 @@ function SetMap(latitude, longitute) {
         id: 'mapbox.streets',
         accessToken: 'your.mapbox.access.token'
     }).addTo(mymap);
+
+    AddLocation(latitude, longitute);
 }
 
 function AddLocation(latitude, longitute, userName) {
