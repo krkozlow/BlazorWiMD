@@ -14,6 +14,7 @@ namespace WiMD.GeolocationContext.Domain.Model
         void Delete(UserConnection user);
         int ListenForUser(UserConnection user, UserConnection listenUser);
         IEnumerable<string> GetAllListeningUsers(UserConnection user);
+        IEnumerable<string> GetUsersThatListenForUser(UserConnection user);
     }
 }
 

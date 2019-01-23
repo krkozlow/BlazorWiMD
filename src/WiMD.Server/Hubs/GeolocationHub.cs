@@ -83,10 +83,21 @@ namespace WiMD.Server.Hubs
 
         public async Task ListenForUser(UserGeolocation listenForUser)
         {
-            var currentUserConnection = _connectionService.GetUserConnection(Context.User.Identity.Name);
-            var userToListenConnection = _connectionService.GetUserConnection(listenForUser.Email);
+            try
+            {
+                var currentUserConnection = _connectionService.GetUserConnection(Context.User.Identity.Name);
+                var userToListenConnection = _connectionService.GetUserConnection(listenForUser.Email);
 
-            _connectionService.ListenForUser(currentUserConnection, userToListenConnection);
+                _connectionService.ListenForUser(currentUserConnection, userToListenConnection);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ListenForUser failed.", ex.Message);
+            }
         }
 
         public async override Task OnDisconnectedAsync(Exception exception)

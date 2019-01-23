@@ -52,14 +52,7 @@ namespace WiMD.GeolocationContext.Application
 
         public IReadOnlyList<string> GetListenUsersIds(UserConnection user)
         {
-            var result = new List<string>();
-            var listenUsers = _userConnectionRepository.GetAllListeningUsers(user);
-            if (listenUsers.Any())
-            {
-                result = listenUsers.ToList();
-            }
-
-            return result;
+            return _userConnectionRepository.GetUsersThatListenForUser(user).ToArray();
         }
 
         public UserConnection GetUserConnection(string userName)
@@ -84,6 +77,12 @@ namespace WiMD.GeolocationContext.Application
 
         public void ListenForUser(UserConnection user, UserConnection userToListen)
         {
+            var userListening = _userConnectionRepository.GetAllListeningUsers(user);
+            if (userListening.Any(x => x == userToListen.ConnectionId))
+            {
+                throw new ArgumentException($"User {user.Name} already listen for {userToListen.Name}");
+            }
+
             _userConnectionRepository.ListenForUser(user, userToListen);
         }
 

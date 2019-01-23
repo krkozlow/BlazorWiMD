@@ -111,6 +111,20 @@ namespace WiMD.Persistence
         {
             var connection = _connectionFactory.Create(_connectionString);
             CommandDefinition commandDefinition = new CommandDefinition(
+                "SELECT [ListenForConnectionId]" +
+                "FROM [UserConnectionMapping]" +
+                "WHERE [BaseConnectionId] = @BaseConnectionId", new
+                {
+                    BaseConnectionId = user.ConnectionId
+                });
+
+            return connection.Query<string>(commandDefinition);
+        }
+
+        public IEnumerable<string> GetUsersThatListenForUser(UserConnection user)
+        {
+            var connection = _connectionFactory.Create(_connectionString);
+            CommandDefinition commandDefinition = new CommandDefinition(
                 "SELECT [BaseConnectionId]" +
                 "FROM [UserConnectionMapping]" +
                 "WHERE [ListenForConnectionId] = @ListenForConnectionId", new
