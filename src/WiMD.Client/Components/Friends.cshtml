@@ -16,7 +16,7 @@
     {
         <li class="list-group-item">
             <img src="avatars/woman-avatar.png" alt="Avatar" class="avatar">
-            <span>@connectedUser.Email</span>
+            <span>@connectedUser.FirstName @connectedUser.LastName</span>
             <button type="button" class="btn btn-primary btn-sm" onclick=@(() => HandleButtonClick(connectedUser))>Add</button>
         </li>
     }

@@ -67,10 +67,12 @@ namespace WiMD.Server.Hubs
         {
             try
             {
-                userLocation.Email = Context.User.Identity.Name;
-
-                var user = _userRepository.Get(userLocation.Email);
+                var user = _userRepository.Get(Context.User.Identity.Name);
                 var listenUsersIds = _connectionService.GetListenUsersIds(new UserConnection { Name = user.Email, ConnectionId = Context.ConnectionId, UserId = user.Id });
+
+                userLocation.Email = user.Email;
+                userLocation.FirstName = user.FirstName;
+                userLocation.LastName = user.LastName;
 
                 await Clients.Clients(listenUsersIds).SendAsync("broadcastMessage", userLocation);
             }
