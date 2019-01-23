@@ -15,9 +15,8 @@ namespace WiMD.GeolocationContext.Application
 
         void ConnectUser(User user, string connectionId);
         void DisconnectUser(User user);
-
-        void ListenForUser(UserConnection user, UserConnection userToListen);
         void StopListenForUser(UserConnection user, UserConnection userToStopListen);
+        void ListenForUser(UserConnection user, UserConnection userToListen);
         IReadOnlyList<string> GetListenUsersIds(UserConnection user);
     }
 }

@@ -139,5 +139,21 @@ namespace WiMD.Persistence
         {
             throw new NotImplementedException();
         }
+
+        public int StopListenForUser(UserConnection user, UserConnection listenUser)
+        {
+            var connection = _connectionFactory.Create(_connectionString);
+            CommandDefinition commandDefinition = new CommandDefinition(
+                "DELETE FROM [UserConnectionMapping]" +
+                "WHERE [BaseConnectionId] = @BaseConnectionId AND [ListenForConnectionId] = @ListenForConnectionId", new
+                {
+                    BaseConnectionId = user.ConnectionId,
+                    ListenForConnectionId = listenUser.ConnectionId
+                });
+
+            var id = connection.Execute(commandDefinition);
+
+            return id;
+        }
     }
 }

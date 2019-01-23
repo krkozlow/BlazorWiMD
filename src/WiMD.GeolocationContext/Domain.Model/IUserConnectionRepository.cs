@@ -13,6 +13,7 @@ namespace WiMD.GeolocationContext.Domain.Model
         UserConnection Update(UserConnection user);
         void Delete(UserConnection user);
         int ListenForUser(UserConnection user, UserConnection listenUser);
+        int StopListenForUser(UserConnection user, UserConnection listenUser);
         IEnumerable<string> GetAllListeningUsers(UserConnection user);
         IEnumerable<string> GetUsersThatListenForUser(UserConnection user);
     }

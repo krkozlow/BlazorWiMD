@@ -14,11 +14,12 @@
     <h5>Friends</h5>
     @foreach (var connectedUser in @ConnectedUsers)
     {
-        <li class="list-group-item">
-            <img src="avatars/woman-avatar.png" alt="Avatar" class="avatar">
-            <span>@connectedUser.FirstName @connectedUser.LastName</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick=@(() => HandleButtonClick(connectedUser))>Add</button>
-        </li>
+    <li class="list-group-item">
+        <img src="avatars/woman-avatar.png" alt="Avatar" class="avatar">
+        <span>@connectedUser.FirstName @connectedUser.LastName</span>
+        <button type="button" class="btn btn-primary btn-sm" onclick=@(() => HandleAddButtonClick(connectedUser))>Add</button>
+        <button type="button" class="btn btn-warning btn-sm" onclick=@(() => HandleStopButtonClick(connectedUser))>Stop</button>
+    </li>
     }
 </ul>
 
@@ -30,9 +31,18 @@
     [Parameter]
     Func<UserGeolocation, Task> AddListenForUserAction { get; set; }
 
-    async Task HandleButtonClick(UserGeolocation e)
+    [Parameter]
+    Func<UserGeolocation, Task> StopListenForUserAction { get; set; }
+
+    async Task HandleAddButtonClick(UserGeolocation e)
     {
-        Console.WriteLine($"HandleButtonClick");
+        Console.WriteLine($"HandleAddButtonClick");
         await AddListenForUserAction.Invoke(e);
+    }
+
+    async Task HandleStopButtonClick(UserGeolocation e)
+    {
+        Console.WriteLine($"HandleStopButtonClick");
+        await StopListenForUserAction.Invoke(e);
     }
 }

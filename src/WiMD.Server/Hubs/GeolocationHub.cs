@@ -102,6 +102,25 @@ namespace WiMD.Server.Hubs
             }
         }
 
+        public async Task StopListenForUser(UserGeolocation stopListenForUser)
+        {
+            try
+            {
+                var currentUserConnection = _connectionService.GetUserConnection(Context.User.Identity.Name);
+                var userToListenConnection = _connectionService.GetUserConnection(stopListenForUser.Email);
+
+                _connectionService.StopListenForUser(currentUserConnection, userToListenConnection);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"StopListenForUser failed.", ex.Message);
+            }
+        }
+
         public async override Task OnDisconnectedAsync(Exception exception)
         {
             try

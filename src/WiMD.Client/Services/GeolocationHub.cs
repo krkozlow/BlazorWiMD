@@ -52,6 +52,13 @@ namespace WiMD.Client.Services
             await _connection.InvokeAsync("ListenForUser", selectedConnectedUser);
         }
 
+        public async Task StopListenForUser(UserGeolocation stopListenForUser)
+        {
+            Console.WriteLine("StopListenForUser");
+            var selectedConnectedUser = connectedUsers.First(x => x.Email == stopListenForUser.Email);
+            await _connection.InvokeAsync("StopListenForUser", selectedConnectedUser);
+        }
+
         public async Task<IEnumerable<UserGeolocation>> GetConnectedUsers()
         {
             Console.WriteLine("GetConnectedUsers");

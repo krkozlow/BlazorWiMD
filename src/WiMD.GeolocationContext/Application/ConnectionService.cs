@@ -88,14 +88,13 @@ namespace WiMD.GeolocationContext.Application
 
         public void StopListenForUser(UserConnection user, UserConnection userToStopListen)
         {
-            var userConnectionMapping = GetUserConnectionMapping(user);
-
-            if (userConnectionMapping.ListeningUsers == null)
+            var userListening = _userConnectionRepository.GetAllListeningUsers(user);
+            if (!userListening.Any(x => x == userToStopListen.ConnectionId))
             {
-                throw new ArgumentException($"There is no listening user.");
+                throw new ArgumentException($"User {user.Name} is not listen for {userToStopListen.Name}");
             }
 
-            userConnectionMapping.ListeningUsers.Remove(userToStopListen);
+            _userConnectionRepository.StopListenForUser(user, userToStopListen);
         }
     }
 }

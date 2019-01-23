@@ -15,7 +15,7 @@
 @page "/location"
 
 <div class="modal-body row">
-    <Friends ConnectedUsers="@connectedUsers" AddListenForUserAction="@AddListenForUserAction" />
+    <Friends ConnectedUsers="@connectedUsers" AddListenForUserAction="@AddListenForUserAction" StopListenForUserAction="@StopListenForUserAction"/>
     <GeolocationMap />
 </div>
 
@@ -27,6 +27,12 @@
     {
         Console.WriteLine("AddListenForUserAction");
         await hub.ListenForUser(userGeolocation);
+    }
+
+    async Task StopListenForUserAction(UserGeolocation userGeolocation)
+    {
+        Console.WriteLine("StopListenForUserAction");
+        await hub.StopListenForUser(userGeolocation);
     }
 
     protected override async Task OnInitAsync()
