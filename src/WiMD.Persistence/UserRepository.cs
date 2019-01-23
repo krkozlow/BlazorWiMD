@@ -52,6 +52,13 @@ namespace WiMD.Persistence
             return connection.Query<User>(_commandQueryProvider.GetConnectedUsers());
         }
 
+        public IEnumerable<User> GetConnectedUsers(string excludedUserName)
+        {
+            var connection = _connectionFactory.Create(_connectionString);
+
+            return connection.Query<User>(_commandQueryProvider.GetConnectedUsers(excludedUserName));
+        }
+
         public IEnumerable<User> GetUsers()
         {
             var connection = _connectionFactory.Create(_connectionString);

@@ -40,7 +40,7 @@
         Console.WriteLine("OnInitAsync");
         await RedirectionHelper.ForUnathorizeUserRedirectToLoginPage(sessionStorage, uriHelper);
         var hubConnection = await HubConnectionProvider.CreateHubConnection(BaseApi.GeolocationHubUrl, sessionStorage);
-        hub = new GeolocationHub(hubConnection, LocationService, Http);
+        hub = new GeolocationHub(hubConnection, LocationService, Http, await sessionStorage.GetItem<string>("token"));
         hub.RegisterGeolocationHandler(UpdateViewAfterHandlerUserGeolocation);
         await hub.Start();
 

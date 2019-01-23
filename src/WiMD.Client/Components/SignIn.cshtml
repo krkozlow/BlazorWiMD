@@ -1,9 +1,11 @@
 ﻿@using WiMD.Client.Models;
+@using Blazor.Extensions.Storage;
 @using Microsoft.AspNetCore.Blazor.Services;
 @using WiMD.Client.api;
 
 @inject IUriHelper uriHelper
 @inject HttpClient Http
+@inject SessionStorage sessionStorage
 
 <form class="form-signin">
     <div class="form-group">
@@ -28,14 +30,16 @@
 
 @functions {
 
-    User user = new User();
+User user = new User();
 
-    async Task SignInUser()
+async Task SignInUser()
+{
+    var result = await Http.PostJsonAsync<User>(BaseApi.SignInUrl, user);
+    await sessionStorage.SetItem<string>("token", result.Token);
+
+    if (result.Token != null)
     {
-        var result = await Http.PostJsonAsync<User>(BaseApi.SignInUrl, user);
-        if (result.Token != null)
-        {
-            uriHelper.NavigateTo("/location");
-        }
+        uriHelper.NavigateTo("/location");
     }
+}
 }

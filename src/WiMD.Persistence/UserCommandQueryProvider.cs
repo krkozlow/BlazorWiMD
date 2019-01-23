@@ -22,6 +22,14 @@ namespace WiMD.Persistence
                                          new { IsConnected = true });
         }
 
+        public CommandDefinition GetConnectedUsers(string excludedUserName)
+        {
+            return new CommandDefinition(@"SELECT [ID], [FirstName], [LastName], [Email], [Password]" +
+                                         "FROM [User]" +
+                                         "WHERE [IsConnected] = @IsConnected AND [Email] != @ExcludedUserName",
+                                         new { IsConnected = true , ExcludedUserName = excludedUserName });
+        }
+
         public CommandDefinition CreateUser(User user)
         {
             return new CommandDefinition(

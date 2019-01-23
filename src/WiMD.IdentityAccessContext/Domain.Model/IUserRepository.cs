@@ -10,6 +10,7 @@ namespace WiMD.IdentityAccess.Domain.Model
         User Get(string email);
         User Get(int id);
         User Update(User user);
+        IEnumerable<User> GetConnectedUsers(string excludedUserName);
         IEnumerable<User> GetConnectedUsers();
         IEnumerable<User> GetUsers();
     }

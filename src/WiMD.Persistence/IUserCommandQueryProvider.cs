@@ -12,6 +12,7 @@ namespace WiMD.Persistence
         CommandDefinition GetUser(int id);
         CommandDefinition GetUsers();
         CommandDefinition GetConnectedUsers();
+        CommandDefinition GetConnectedUsers(string excludedUserName);
         CommandDefinition CreateUser(User user);
         CommandDefinition UpdateUser(User user);
     }

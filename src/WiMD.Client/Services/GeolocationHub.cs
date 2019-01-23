@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WiMD.Client.api;
 using WiMD.Client.Models;
 using Microsoft.AspNetCore.Blazor;
+using System.Net.Http.Headers;
 
 namespace WiMD.Client.Services
 {
@@ -20,16 +21,20 @@ namespace WiMD.Client.Services
         private IList<UserGeolocation> _usersLocation = new List<UserGeolocation>();
         private IEnumerable<UserGeolocation> connectedUsers = new List<UserGeolocation>();
         private Action<IList<UserGeolocation>> _updateView;
+        private string _token = "";
 
         const string serverActionName = "broadcastMessage";
         //const string sendUserGeolocation = "SendUserGeolocation";
         const string sendUserGeolocation = "Send";
 
-        public GeolocationHub(HubConnection connection, LocationService locationService, HttpClient http)
+        public GeolocationHub(HubConnection connection, LocationService locationService, HttpClient http, string token)
         {
             _locationService = locationService;
             _connection = connection;
             _http = http;
+            _token = token;
+
+            _http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {_token}");
         }
 
         public void RegisterGeolocationHandler(Action<IList<UserGeolocation>> updateView)
@@ -68,8 +73,8 @@ namespace WiMD.Client.Services
 
         async Task InitializeConnectedUsers()
         {
-            Console.WriteLine("InitializeConnectedUsers");
-            this.connectedUsers = await _http. GetJsonAsync<IEnumerable<UserGeolocation>>(BaseApi.GetConnectedUserUrl);
+            Console.WriteLine($"InitializeConnectedUsers token: {_token}");
+            this.connectedUsers = await _http.GetJsonAsync<IEnumerable<UserGeolocation>>(BaseApi.GetConnectedUserUrl);
         }
 
         public async Task SendCurrentUserGeolocation()
